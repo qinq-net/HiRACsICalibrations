@@ -123,8 +123,9 @@ void FitPDT()
          std::string LineRead;
          std::getline(FileIn_proton, LineRead);
 
+         LineRead.assign(LineRead.substr(0, LineRead.find('*')));
          if(LineRead.empty()) continue;
-         if(LineRead.find('*')==0) continue;
+         if(LineRead.find_first_not_of(' ')==std::string::npos) continue;
 
          std::istringstream LineStream(LineRead);
 
@@ -212,8 +213,9 @@ void FitPDT()
          std::string LineRead;
          std::getline(FileIn_deuteron, LineRead);
 
+         LineRead.assign(LineRead.substr(0, LineRead.find('*')));
          if(LineRead.empty()) continue;
-         if(LineRead.find('*')==0) continue;
+         if(LineRead.find_first_not_of(' ')==std::string::npos) continue;
 
          std::istringstream LineStream(LineRead);
 
@@ -299,8 +301,9 @@ void FitPDT()
          std::string LineRead;
          std::getline(FileIn_triton, LineRead);
 
+         LineRead.assign(LineRead.substr(0, LineRead.find('*')));
          if(LineRead.empty()) continue;
-         if(LineRead.find('*')==0) continue;
+         if(LineRead.find_first_not_of(' ')==std::string::npos) continue;
 
          std::istringstream LineStream(LineRead);
 

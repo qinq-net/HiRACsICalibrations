@@ -60,6 +60,8 @@ void DEEFIT2()
 {
   const int csi_gain_setting=170;
   int LiseModel=1; // LiseModel =1 used for low energy experiments
+  double errPercentageCsIV = 0.01;
+  double errPercentageCsIE = 0.01;
 
   ifstream FileInCut("calibrations/DEEFITCut.dat");
   ifstream FileInPar("calibrations/DEEFITParameters.dat");
@@ -170,15 +172,17 @@ void DEEFIT2()
     {
       input.x = XChannel;
       double CsIV = CsICalibrationModule.GetVoltageValue(XChannel, numtel, numcsi);
+      double errCsIV = errPercentageCsIV *  CsIV;
       double ESi = func14(input, par);
       if(ESi<=0) continue;
       double Eresidual=LISEModule.GetResidualEnergy(Z,A,ESi,"Si",TelSiThickness[numtel],LiseModel);
       double EresidualOnCsI=Eresidual-LISEModule.GetEnergyLoss(Z,A,Eresidual,"Mylar",CsIMylarThickness,LiseModel);
       double CsIE=EresidualOnCsI;
-      FileOut << setw(5) << numtel << setw(10) << numcsi << setw(5) << Z << setw(5) << A << setw(15) << CsIV << setw(15) << 0 /*errCsIV*/ << setw(15) << CsIE << setw(15) << 0 /*errCsIE*/ <<endl;
-      FileOutDEE << setw(5) << numtel << setw(10) << numcsi << setw(5) << Z << setw(5) << A << setw(15) << CsIV << setw(15) << 0 /*errCsIV*/ << setw(15) << ESi << setw(15) << 0 /*errCsIE*/ <<endl;
+      double errCsIE = errPercentageCsIE * EresidualOnCsI;
+      FileOut << setw(5) << numtel << setw(10) << numcsi << setw(5) << Z << setw(5) << A << setw(15) << CsIV << setw(15) << errCsIV  << setw(15) << CsIE << setw(15) << errCsIE  <<endl;
+      FileOutDEE << setw(5) << numtel << setw(10) << numcsi << setw(5) << Z << setw(5) << A << setw(15) << CsIV << setw(15) << errCsIV << setw(15) << ESi << setw(15) << errESi  <<endl;
 
-      printf("Tel %02d CsI %02d  Z%02d  A%02d : ESi=%.3f -> ECsI=%.3f\n",numtel, numcsi, Z, A, CsIV, CsIE);
+      printf("Tel %02d CsI %02d  Z%02d  A%02d : ESi=%.3f +- %.4f -> ECsI=%.3f +- %.4f\n",numtel, numcsi, Z, A, ESi, errESi, CsIE, errCsIE);
     }
   }
   FileOut.close();

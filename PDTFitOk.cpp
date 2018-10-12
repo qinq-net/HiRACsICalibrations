@@ -576,7 +576,7 @@ void PDTFitOk()
 
         /************************************************************************************************************
          *                                                                                                          *
-         *                                         For Li6s                                                      *
+         *                                         For Li6s                                                         *
          *                                                                                                          *
          ************************************************************************************************************/
          Int_t NFiles_Li6=1;
@@ -967,7 +967,7 @@ void PDTFitOk()
 
 
 
-
+/*
 
        ////////////////////////////////////////////////////////////////////////////////////////////////
        /// To create a multigraph to draw all the firt in the same cnavas
@@ -1073,7 +1073,7 @@ void PDTFitOk()
              }
           }
          }
-       }
+       }   */
 
     ////////////////////////////////////////////////////////////
     ///   Making the dataset  for Hydrogen isotopes
@@ -1304,9 +1304,9 @@ void PDTFitOk()
       fTriton->Draw("SAME");
 */
 
-  //    TotGraph_HI[i][j]->Draw("P");
-  //    TotGraph_HI[i][j]->Fit("fHI");
-      //fHI->Draw("SURF");
+  //     TotGraph_HI[i][j]->Draw("P");
+       TotGraph_HI[i][j]->Fit("fHI");
+       fHI->Draw("SURF");
 
 
       //fHe3->SetParameters(fHI->GetParameters());
