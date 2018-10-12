@@ -2,21 +2,23 @@
 void ExtractDEEPointsOmitLow()
 {
   int Z=1;
-  int A=3;
+  int A=1;
 
   int Low_Estart=5;
   int Low_Eend=25;
   int Low_Estep=8;
   int Mid_Estart=30;
-  int Mid_Eend=90; //  proton--80; deoteron & triton --90
+  int Mid_Eend=80; //  proton--80; deoteron & triton --90
   int Mid_Estep=10;
 
   ifstream FileIn("calibrations/DEEFITPointsFinal.dat");
-  ofstream FileOut(Form("calibrations/OmitLowDEEPoints_Z%02d_A%02d.dat", Z, A));
+  ofstream FileOut(Form("calibrations/DEEPointsOmitLow_Z%02d_A%02d.dat", Z, A));
   FileOut << setw(5) << "*tel" << setw(10) << "numcsi" << setw(15) << "CsIV" << setw(15) << "errCsIV" << setw(15) <<"CsIE"<< setw(15)<<"errCsIE\n";
 
   std::vector<double> VoltageValues[12][4];
   std::vector<double> EnergyValues[12][4];
+  std::vector<double> errVoltageValues[12][4];
+  std::vector<double> errEnergyValues[12][4];
 
   while (!FileIn.eof())
   {
@@ -43,39 +45,49 @@ void ExtractDEEPointsOmitLow()
 
     VoltageValues[numtel][numcsi].push_back(V);
     EnergyValues[numtel][numcsi].push_back(E);
+    errVoltageValues[numtel][numcsi].push_back(err_V);
+    errEnergyValues[numtel][numcsi].push_back(err_E);
 
   }
 
-  double err[12][4];
-  double Voltage[12][4];
+  double energy[12][4];
+  double voltage[12][4];
+  double err_energy[12][4];
+  double err_voltage[12][4];
   for(int i=0; i<12; i++)
   {
     for(int j=0; j<4; j++)
     {
+      if(EnergyValues[i][j].size()==0) continue;
+
       for(int k=Low_Estart; k<Low_Eend; k+=Low_Estep)
       {
-        for(int h=0; h<(EnergyValues[i][j].size()-1); h++)
+        for(int h=0; h<(EnergyValues[i][j].size()); h++)
         {
            if( (EnergyValues[i][j][h]>(k-1)) && (EnergyValues[i][j][h]<(k+1)))
            {
-             err[i][j] =  fmin(EnergyValues[i][j][h] , EnergyValues[i][j][h+1]);
-             Voltage[i][j]= VoltageValues[i][j][h];
+             energy[i][j] =   EnergyValues[i][j][h];
+             voltage[i][j]= VoltageValues[i][j][h];
+             err_energy[i][j]=errEnergyValues[i][j][h];
+             err_voltage[i][j]=errVoltageValues[i][j][h];
            }
          }
-         FileOut << setw(5) << i << setw(10) << j << setw(15) <<  Voltage[i][j] << setw(15) << 0 << setw(15) << err[i][j] << setw(15) << 0 << endl;
+         FileOut << setw(5) << i << setw(10) << j << setw(15) <<  voltage[i][j] << setw(15) << err_voltage[i][j] << setw(15) << energy[i][j] << setw(15) << err_energy[i][j] << endl;
        }
 
        for(int k=Mid_Estart; k<Mid_Eend; k+=Mid_Estep)
        {
-         for(int h=0; h<(EnergyValues[i][j].size()-1); h++)
+         for(int h=0; h<(EnergyValues[i][j].size()); h++)
          {
             if( (EnergyValues[i][j][h]>(k-1)) && (EnergyValues[i][j][h]<(k+1)))
             {
-              err[i][j] =  fmin(EnergyValues[i][j][h] , EnergyValues[i][j][h+1]);
-              Voltage[i][j]= VoltageValues[i][j][h];
+              energy[i][j] =   EnergyValues[i][j][h];
+              voltage[i][j]= VoltageValues[i][j][h];
+              err_energy[i][j]=errEnergyValues[i][j][h];
+              err_voltage[i][j]=errVoltageValues[i][j][h];
             }
           }
-          FileOut << setw(5) << i << setw(10) << j << setw(15) <<  Voltage[i][j] << setw(15) << 0 << setw(15) << err[i][j] << setw(15) << 0 << endl;
+          FileOut << setw(5) << i << setw(10) << j << setw(15) <<  voltage[i][j] << setw(15) << err_voltage[i][j] << setw(15) << energy[i][j] << setw(15) << err_energy[i][j] << endl;
         }
     }
 
