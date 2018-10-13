@@ -70,30 +70,30 @@ void FitPDT()
   //////////////////////////////////////////////////////////////////////////////
   ////   retriving data for protons
   //////////////////////////////////////////////////////////////////////////////
-  Int_t NFiles_Proton=12;
+  Int_t NFiles_Proton=11;
   std::string * FileIn_name_Proton[NFiles_Proton];
   FileIn_name_Proton[0] = new std::string("calibrations/WMUdata_Z01_A01.dat");   // WMU data
   FileIn_name_Proton[1] = new std::string("calibrations/DEEPointsOmitLow_Z01_A01.dat"); //DEE points
   FileIn_name_Proton[2] = new std::string("calibrations/Corrected_HiRA_CsIKinimatics_2013_2037_40Ca39.0AMeV_gain 200.dat"); // kinematics ponits
   FileIn_name_Proton[3] = new std::string("calibrations/Corrected_HiRA_CsIKinimatics_2312_2312_40Ca56.6AMeV_gain 170.dat"); // kinematics ponits
-  FileIn_name_Proton[4] = new std::string("calibrations/Corrected_HiRA_CsIKinimatics_2825_2829_40Ca139.8AMeV_gain 130.dat"); // kinematics ponits
-  FileIn_name_Proton[5] = new std::string("calibrations/Corrected_HiRA_CsIKinimatics_4000_4005_48Ca139.8AMeV_gain 170.dat"); // kinematics ponits
-  FileIn_name_Proton[6] = new std::string("calibrations/Corrected_HiRA_CsIKinimatics_4021_4022_48Ca139.8AMeV_gain 170.dat"); // kinematics ponits
-  FileIn_name_Proton[7] = new std::string("calibrations/Corrected_HiRA_CsIKinimatics_4034_4037_48Ca28.0AMeV_gain 170.dat"); // kinematics ponits
-  FileIn_name_Proton[8] = new std::string("calibrations/Corrected_HiRA_CsIKinimatics_4332_4332_48Ca56.6AMeV_gain 170.dat"); // kinematics ponits
-  FileIn_name_Proton[9] = new std::string("calibrations/Corrected_HiRA_CsIKinimatics_4577_4584_48Ca28.0AMeV_gain 170.dat"); // kinematics ponits
-  FileIn_name_Proton[10] = new std::string("calibrations/Corrected_HiRA_CsIKinimatics_4585_4589_48Ca56.6AMeV_gain 170.dat"); // kinematics ponits
-  FileIn_name_Proton[11] = new std::string("calibrations/HiRA_CsI_PunchThrough_Z01_A01.dat");  // punch through points
+  //FileIn_name_Proton[4] = new std::string("calibrations/Corrected_HiRA_CsIKinimatics_2825_2829_40Ca139.8AMeV_gain 130.dat"); // kinematics ponits
+  FileIn_name_Proton[4] = new std::string("calibrations/Corrected_HiRA_CsIKinimatics_4000_4005_48Ca139.8AMeV_gain 170.dat"); // kinematics ponits
+  FileIn_name_Proton[5] = new std::string("calibrations/Corrected_HiRA_CsIKinimatics_4021_4022_48Ca139.8AMeV_gain 170.dat"); // kinematics ponits
+  FileIn_name_Proton[6] = new std::string("calibrations/Corrected_HiRA_CsIKinimatics_4034_4037_48Ca28.0AMeV_gain 170.dat"); // kinematics ponits
+  FileIn_name_Proton[7] = new std::string("calibrations/Corrected_HiRA_CsIKinimatics_4332_4332_48Ca56.6AMeV_gain 170.dat"); // kinematics ponits
+  FileIn_name_Proton[8] = new std::string("calibrations/Corrected_HiRA_CsIKinimatics_4577_4584_48Ca28.0AMeV_gain 170.dat"); // kinematics ponits
+  FileIn_name_Proton[9] = new std::string("calibrations/Corrected_HiRA_CsIKinimatics_4585_4589_48Ca56.6AMeV_gain 170.dat"); // kinematics ponits
+  FileIn_name_Proton[10] = new std::string("calibrations/HiRA_CsI_PunchThrough_Z01_A01.dat");  // punch through points
 
   //////////////////////////////////////////////////////////////////////////////
   ///   definition of TGraphErrors, TMultiGraph, TLengend
   TGraphErrors * DataProton [12][4][NFiles_Proton];
   //////////////////////////////////////////////////////////////////////////////
   ///  definition of variables to read the input data files
-  std::vector<double> CsIV_Proton[12][4][2];
-  std::vector<double> errCsIV_Proton[12][4][2];
-  std::vector<double> CsIE_Proton[12][4][2];
-  std::vector<double> errCsIE_Proton[12][4][2];
+  std::vector<double> CsIV_Proton[12][4][12];
+  std::vector<double> errCsIV_Proton[12][4][12];
+  std::vector<double> CsIE_Proton[12][4][12];
+  std::vector<double> errCsIE_Proton[12][4][12];
 
   //////////////////////////////////////////////////////////////////////////////
   ///  definition of the number of data points for each input file
@@ -147,14 +147,13 @@ void FitPDT()
     FileIn_Proton.close();
   }
 
-
   //////////////////////////////////////////////////////////////////////////////
   ////   retriving data for deuterons
   //////////////////////////////////////////////////////////////////////////////
   Int_t NFiles_Deuteron=3;
   std::string * FileIn_name_Deuteron[NFiles_Deuteron];
   FileIn_name_Deuteron[0] = new std::string("calibrations/WMUdata_Z01_A02.dat");   // WMU data
-  FileIn_name_Deuteron[1] = new std::string("calibrations/deePointsOmitLow_Z01_A02.dat"); //DEE points
+  FileIn_name_Deuteron[1] = new std::string("calibrations/DEEPointsOmitLow_Z01_A02.dat"); //DEE points
   FileIn_name_Deuteron[2] = new std::string("calibrations/HiRA_CsI_PunchThrough_Z01_A02.dat");  // punch through points
 
   //////////////////////////////////////////////////////////////////////////////
@@ -163,10 +162,10 @@ void FitPDT()
 
   //////////////////////////////////////////////////////////////////////////////
   ///  definition of variables to read the input data files
-  std::vector<double> CsIV_Deuteron[12][4][2];
-  std::vector<double> errCsIV_Deuteron[12][4][2];
-  std::vector<double> CsIE_Deuteron[12][4][2];
-  std::vector<double> errCsIE_Deuteron[12][4][2];
+  std::vector<double> CsIV_Deuteron[12][4][3];
+  std::vector<double> errCsIV_Deuteron[12][4][3];
+  std::vector<double> CsIE_Deuteron[12][4][3];
+  std::vector<double> errCsIE_Deuteron[12][4][3];
 
   //////////////////////////////////////////////////////////////////////////////
   ///  definition of the number of data points for each input file
@@ -403,8 +402,8 @@ for(int i=0; i<12; i++)
    {
      if(CsIV_Hydrogen[i][j].size()==0) continue;
      TotGraph[i][j] = new TGraph2DErrors(CsIV_Hydrogen[i][j].size(), CsIE_Hydrogen[i][j].data(), ZA_Hydrogen[i][j].data(), CsIV_Hydrogen[i][j].data(), errCsIE_Hydrogen[i][j].data(),  errZA_Hydrogen[i][j].data(), errCsIV_Hydrogen[i][j].data());
-     TotGraph[i][j]->SetName(Form("TEL%02d_CsI_%02d", i, j));
-     TotGraph[i][j]->SetTitle(Form("Hydrogen_TEL%02d_CsI_%02d", i, j));
+     TotGraph[i][j]->SetName(Form("2DTEL%02d_CsI_%02d", i, j));
+     TotGraph[i][j]->SetTitle(Form("2DHydrogen_TEL%02d_CsI_%02d", i, j));
      TotGraph[i][j]->SetMarkerStyle(20);
    }
  }
@@ -421,7 +420,7 @@ for(int i=0; i<12; i++)
   fProton->SetLineColor(2);
   fDeuteron->SetLineColor(3);
   fTriton->SetLineColor(6);
-  fHydrogen->SetParameters(0.02,2,1);
+  fHydrogen->SetParameters(0.01,10,1);
 //______________________________________________________________________________
 
 
@@ -435,12 +434,15 @@ for(int i=0; i<12; i++)
     {
       if(CsIV_Hydrogen[i][j].size()==0) continue;
 
+  //    TotGraph[i][j]->Draw("AP");
       TotGraph[i][j]->Fit("fHydrogen");
       fProton->SetParameters(fHydrogen->GetParameters());
       fDeuteron->SetParameters(fHydrogen->GetParameters());
       fTriton->SetParameters(fHydrogen->GetParameters());
 
       multiHydrogen[i][j]->Draw("APE");
+      multiHydrogen[i][j]->SetName(Form("TEL%02d_CsI_%02d", i, j));
+      multiHydrogen[i][j]->SetTitle(Form("Hydrogen_TEL%02d_CsI_%02d", i, j));
       fProton->Draw("SAME");
       fDeuteron->Draw("SAME");
       fTriton->Draw("SAME");

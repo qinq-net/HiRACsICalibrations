@@ -1,8 +1,8 @@
 
-void ReadWMUdata()
+void ReadWMUdataFinal()
 {
-
-  ifstream FileIn("finalResult.txt");
+  double errCsIVPecentage = 0.01;
+  ifstream FileIn("./output/WMUdata.dat");
 
   std::string FileOutTag("WMUdata");
 
@@ -28,9 +28,8 @@ void ReadWMUdata()
 
     std::stringstream LineStream(LineRead);
 
-    int ADCNum;
     int HiRANum;
-  //  int TelNum;
+    int TelNum;
     int CsINum;
     int ANum;
     int ZNum;
@@ -40,7 +39,10 @@ void ReadWMUdata()
     double errCsIV;
 
 
-    LineStream >> ADCNum >> HiRANum  >> CsINum >> ANum >> ZNum >> ECsI >> errECsI >> CsIV >> errCsIV;
+    LineStream >> HiRANum >>TelNum >> CsINum >> ANum >> ZNum >> ECsI  >> CsIV ;
+    errCsIV = errCsIVPecentage * CsIV;
+    errECsI = 0;
+
     if(HiRANum!=10) continue;
 
     if(ZNum==1 && ANum==1)
