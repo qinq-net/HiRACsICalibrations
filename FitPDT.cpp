@@ -1,32 +1,10 @@
-
-double fit_proton (double *x, double *par)
-{
-  double squareterm = pow(x[0], 2)+par[1]*1*x[0];
-  double linearterm = (x[0]+par[2]*1)/par[0];
-  double light = squareterm/linearterm;
-  return light;
-}
-
-double fit_deuteron (double *x, double *par)
-{
-  double squareterm = pow(x[0], 2)+par[1]*2*x[0];
-  double linearterm = (x[0]+par[2]*2)/par[0];
-  double light = squareterm/linearterm;
-  return light;
-}
-
-double fit_triton (double *x, double *par)
-{
-  double squareterm = pow(x[0], 2)+par[1]*3*x[0];
-  double linearterm = (x[0]+par[2]*3)/par[0];
-  double light = squareterm/linearterm;
-  return light;
-}
-
-//definition of the fitting formula
-//this formula comes from Jerzy Lukasik
-//email: jerzy.lukasik@ifj.edu.pl
-double fitfunc(double *x, double *par)
+//______________________________________________________________________________
+////////////////////////////////////////////////////////////////////////////////
+//// definition of the fitting formula for proton, deuteron and triton
+//// this formula comes from Jerzy Lukasik
+//// email: jerzy.lukasik@ifj.edu.pl
+////////////////////////////////////////////////////////////////////////////////
+double FitJerzy(double *x, double *par)
 {
   if(par[1]<=par[2])
   {
@@ -34,8 +12,8 @@ double fitfunc(double *x, double *par)
   }
 
   // x[0]--E, x[1]--A
-
-  if(x[1]==101 || x[1]==102 || x[1]==103) {
+  if(x[1]==101 || x[1]==102 || x[1]==103)
+  {
     int A = Int_t (x[1])%100;
     int Z = Int_t (x[1])/100;
     double squareterm = pow(x[0], 2)+par[1]*A*x[0];
@@ -43,417 +21,426 @@ double fitfunc(double *x, double *par)
     double light = par[0]*squareterm/linearterm;
     return light;
   }
-
   return 0;
 }
+//______________________________________________________________________________
+//______________________________________________________________________________
+////////////////////////////////////////////////////////////////////////////////
+//// deifinition of fitting formula of protons
+double fit_proton (double *x, double *par)
+{
+  double squareterm = pow(x[0], 2)+par[1]*1*x[0];
+  double linearterm = (x[0]+par[2]*1)/par[0];
+  double light = squareterm/linearterm;
+  return light;
+}
+//______________________________________________________________________________
+//______________________________________________________________________________
+////////////////////////////////////////////////////////////////////////////////
+//// deifinition of fitting formula of deuterons
+double fit_deuteron (double *x, double *par)
+{
+  double squareterm = pow(x[0], 2)+par[1]*2*x[0];
+  double linearterm = (x[0]+par[2]*2)/par[0];
+  double light = squareterm/linearterm;
+  return light;
+}
+//______________________________________________________________________________
+//// deifinition of fitting formula of tritons
+double fit_triton (double *x, double *par)
+{
+  double squareterm = pow(x[0], 2)+par[1]*3*x[0];
+  double linearterm = (x[0]+par[2]*3)/par[0];
+  double light = squareterm/linearterm;
+  return light;
+}
+//______________________________________________________________________________
 
 
+
+
+//______________________________________________________________________________
 void FitPDT()
 {
-   const int TELNUM=12;
-   const int CSINUM=4;
 
-   ofstream FileOut;
-   FileOut.open("calibrations/pdtFitResult.dat");
-   FileOut << setw(5) <<"*telnum" <<"  "<< setw(10) << "csinum" <<"  "<< setw(10) << "Par0" <<"  "<<setw(10)<<"Par1"<<"  "<<setw(10)<<"Par2\n";
+//   ofstream FileOut;
+//   FileOut.open("calibrations/pdtFitResult.dat");
+//   FileOut << setw(5) <<"*telnum" <<"  "<< setw(10) << "csinum" <<"  "<< setw(10) << "Par0" <<"  "<<setw(10)<<"Par1"<<"  "<<setw(10)<<"Par2\n";
 
-   //Definition of the total graph 2D
-   TGraph2DErrors * TotGraph[12][4];
+  //////////////////////////////////////////////////////////////////////////////
+  ////   retriving data for protons
+  //////////////////////////////////////////////////////////////////////////////
+  Int_t NFiles_Proton=12;
+  std::string * FileIn_name_Proton[NFiles_Proton];
+  FileIn_name_Proton[0] = new std::string("calibrations/WMUdata_Z01_A01.dat");   // WMU data
+  FileIn_name_Proton[1] = new std::string("calibrations/DEEPointsOmitLow_Z01_A01.dat"); //DEE points
+  FileIn_name_Proton[2] = new std::string("calibrations/Corrected_HiRA_CsIKinimatics_2013_2037_40Ca39.0AMeV_gain 200.dat"); // kinematics ponits
+  FileIn_name_Proton[3] = new std::string("calibrations/Corrected_HiRA_CsIKinimatics_2312_2312_40Ca56.6AMeV_gain 170.dat"); // kinematics ponits
+  FileIn_name_Proton[4] = new std::string("calibrations/Corrected_HiRA_CsIKinimatics_2825_2829_40Ca139.8AMeV_gain 130.dat"); // kinematics ponits
+  FileIn_name_Proton[5] = new std::string("calibrations/Corrected_HiRA_CsIKinimatics_4000_4005_48Ca139.8AMeV_gain 170.dat"); // kinematics ponits
+  FileIn_name_Proton[6] = new std::string("calibrations/Corrected_HiRA_CsIKinimatics_4021_4022_48Ca139.8AMeV_gain 170.dat"); // kinematics ponits
+  FileIn_name_Proton[7] = new std::string("calibrations/Corrected_HiRA_CsIKinimatics_4034_4037_48Ca28.0AMeV_gain 170.dat"); // kinematics ponits
+  FileIn_name_Proton[8] = new std::string("calibrations/Corrected_HiRA_CsIKinimatics_4332_4332_48Ca56.6AMeV_gain 170.dat"); // kinematics ponits
+  FileIn_name_Proton[9] = new std::string("calibrations/Corrected_HiRA_CsIKinimatics_4577_4584_48Ca28.0AMeV_gain 170.dat"); // kinematics ponits
+  FileIn_name_Proton[10] = new std::string("calibrations/Corrected_HiRA_CsIKinimatics_4585_4589_48Ca56.6AMeV_gain 170.dat"); // kinematics ponits
+  FileIn_name_Proton[11] = new std::string("calibrations/HiRA_CsI_PunchThrough_Z01_A01.dat");  // punch through points
 
+  //////////////////////////////////////////////////////////////////////////////
+  ///   definition of TGraphErrors, TMultiGraph, TLengend
+  TGraphErrors * DataProton [12][4][NFiles_Proton];
+  //////////////////////////////////////////////////////////////////////////////
+  ///  definition of variables to read the input data files
+  std::vector<double> CsIV_Proton[12][4][2];
+  std::vector<double> errCsIV_Proton[12][4][2];
+  std::vector<double> CsIE_Proton[12][4][2];
+  std::vector<double> errCsIE_Proton[12][4][2];
 
-   /************************************************************************************************************
-    *                                                                                                          *
-    *                                         For protons                                                      *
-    *                                                                                                          *
-    ************************************************************************************************************/
+  //////////////////////////////////////////////////////////////////////////////
+  ///  definition of the number of data points for each input file
+  for(int FileNum=0; FileNum<NFiles_Proton; FileNum++)
+  {
+    ifstream FileIn_Proton(FileIn_name_Proton[FileNum]->c_str());
+    if(!FileIn_Proton.is_open())
+    {
+      printf("Error: file%s not found\n", FileIn_name_Proton[FileNum]->c_str());
+      return;
+    }
 
-     /////////////////////////////////////////////////////////////////////////////////////////
-     ///   read datas from input files
-     Int_t NFiles_proton=12;
-     std::string * FileIn_name_proton[NFiles_proton];
-     FileIn_name_proton[0] = new std::string("calibrations/WMUdata_Z01_A01.dat");   // WMU data
-     FileIn_name_proton[1] = new std::string("calibrations/OmitLowDEEPoints_Z01_A01.dat"); //DEE points
-     FileIn_name_proton[2] = new std::string("calibrations/Corrected_HiRA_CsIKinimatics_2013_2037_40Ca39.0AMeV_gain 200.dat"); // kinematics ponits
-     FileIn_name_proton[3] = new std::string("calibrations/Corrected_HiRA_CsIKinimatics_2312_2312_40Ca56.6AMeV_gain 170.dat"); // kinematics ponits
-     FileIn_name_proton[4] = new std::string("calibrations/Corrected_HiRA_CsIKinimatics_2825_2829_40Ca139.8AMeV_gain 130.dat"); // kinematics ponits
-     FileIn_name_proton[5] = new std::string("calibrations/Corrected_HiRA_CsIKinimatics_4000_4005_48Ca139.8AMeV_gain 170.dat"); // kinematics ponits
-     FileIn_name_proton[6] = new std::string("calibrations/Corrected_HiRA_CsIKinimatics_4021_4022_48Ca139.8AMeV_gain 170.dat"); // kinematics ponits
-     FileIn_name_proton[7] = new std::string("calibrations/Corrected_HiRA_CsIKinimatics_4034_4037_48Ca28.0AMeV_gain 170.dat"); // kinematics ponits
-     FileIn_name_proton[8] = new std::string("calibrations/Corrected_HiRA_CsIKinimatics_4332_4332_48Ca56.6AMeV_gain 170.dat"); // kinematics ponits
-     FileIn_name_proton[9] = new std::string("calibrations/Corrected_HiRA_CsIKinimatics_4577_4584_48Ca28.0AMeV_gain 170.dat"); // kinematics ponits
-     FileIn_name_proton[10] = new std::string("calibrations/Corrected_HiRA_CsIKinimatics_4585_4589_48Ca56.6AMeV_gain 170.dat"); // kinematics ponits
-     FileIn_name_proton[11] = new std::string("calibrations/HiRA_CsI_PunchThrough_Z01_A01.dat");  // punch through points
+    ////////////////////////////////////////////////////////////////////////////
+    ///    Loop, to read each input data file
+    while(!FileIn_Proton.eof())
+    {
+      std::string LineRead;
+      std::getline(FileIn_Proton, LineRead);
 
-     ////////////////////////////////////////////////////////////////////////////////////////////////
-     ///   definition of TGraphErrors, TMultiGraph, TLengend
-     TGraphErrors * DataProton [12][4][NFiles_proton];
+      LineRead.assign(LineRead.substr(0, LineRead.find('*')));
+      if(LineRead.empty()) continue;
+      if(LineRead.find_first_not_of(' ')==std::string::npos) continue;
 
-     //////////////////////////////////////////////////////////////////////////////////////////////
-     ///  definition of variables to read the input data files
-     int NPoints_proton[TELNUM][CSINUM][NFiles_proton];
-     double CsIV_proton[TELNUM][CSINUM][NFiles_proton][100];
-     double err_CsIV_proton[TELNUM][CSINUM][NFiles_proton][100];
-     double Energy_proton[TELNUM][CSINUM][NFiles_proton][100];
-     double err_Energy_proton[TELNUM][CSINUM][NFiles_proton][100];
-     double ZA_proton[TELNUM][CSINUM][NFiles_proton][100];
+      std::istringstream LineStream(LineRead);
 
-     /////////////////////////////////////////////////////////////////////////////////////////////
-     ///  definition of the number of data points for each input file
-     for(int FileNum=0; FileNum<NFiles_proton; FileNum++)
-     {
-       for(int i=0; i<TELNUM; i++)
-       {
-         for(int j=0; j<CSINUM; j++)
-         {
-           NPoints_proton[i][j][FileNum]=0;
-         }
-       }
-       ifstream FileIn_proton(FileIn_name_proton[FileNum]->c_str());
+      int telnum;
+      int csinum;
+      double V;
+      double errV;
+      double E;
+      double errE;
 
-       if(!FileIn_proton.is_open())
-       {
-         printf("Error: file%s not found\n", FileIn_name_proton[FileNum]->c_str());
-         return;
-       }
+      LineStream >> telnum >> csinum >> V >> errV >> E >> errE;
 
-       /////////////////////////////////////////////////////////////////////////////////////
-       ///    Loop, to read each input data file
-       while(!FileIn_proton.eof())
-       {
-         std::string LineRead;
-         std::getline(FileIn_proton, LineRead);
-
-         LineRead.assign(LineRead.substr(0, LineRead.find('*')));
-         if(LineRead.empty()) continue;
-         if(LineRead.find_first_not_of(' ')==std::string::npos) continue;
-
-         std::istringstream LineStream(LineRead);
-
-         int telnum;
-         int csinum;
-
-         LineStream >> telnum >> csinum;
-         LineStream >> CsIV_proton[telnum][csinum][FileNum][NPoints_proton[telnum][csinum][FileNum]];
-         LineStream >> err_CsIV_proton[telnum][csinum][FileNum][NPoints_proton[telnum][csinum][FileNum]];
-         LineStream >> Energy_proton[telnum][csinum][FileNum][NPoints_proton[telnum][csinum][FileNum]];
-         LineStream >> err_Energy_proton[telnum][csinum][FileNum][NPoints_proton[telnum][csinum][FileNum]];
-
-         ZA_proton[telnum][csinum][FileNum][NPoints_proton[telnum][csinum][FileNum]]=101;  // Z_proton= ZA_proton/100, A_proton
-
-         NPoints_proton[telnum][csinum][FileNum]++;
-       }
-
-       for(int i=0; i<TELNUM; i++)
-       {
-         for(int j=0; j<CSINUM; j++)
-         {
-           if(NPoints_proton[i][j][FileNum]!=0)
-           {
-             DataProton[i][j][FileNum] = new TGraphErrors(NPoints_proton[i][j][FileNum], Energy_proton[i][j][FileNum], CsIV_proton[i][j][FileNum], err_Energy_proton[i][j][FileNum] ,err_CsIV_proton[i][j][FileNum]);
-             DataProton[i][j][FileNum]->SetMarkerColor(1); // black marker for protons
-             DataProton[i][j][FileNum]->SetLineColor(1);
-             DataProton[i][j][FileNum]->SetMarkerStyle(20+FileNum);
-           }
-           else DataProton[i][j][FileNum]=0;
-         }
-       }
-       FileIn_proton.close();
-     }
-
-
-     /************************************************************************************************************
-      *                                                                                                          *
-      *                                         For deutorons                                                    *
-      *                                                                                                          *
-      ************************************************************************************************************/
-
-     Int_t NFiles_deuteron=3;
-     std::string * FileIn_name_deuteron[NFiles_deuteron];
-     FileIn_name_deuteron[0] = new std::string("calibrations/WMUdata_Z01_A02.dat");   // WMU data
-     FileIn_name_deuteron[1] = new std::string("calibrations/OmitLowDEEPoints_Z01_A02.dat"); //DEE points
-     FileIn_name_deuteron[2] = new std::string("calibrations/HiRA_CsI_PunchThrough_Z01_A02.dat");  // punch through points
-
-     //////////////////////////////////////////////////////////////////////////////////////////////////
-     ///  definition of TGraphErrors, TMultiGraph, TLengend
-     TGraphErrors * DataDeuteron [12][4][NFiles_deuteron];
-
-     ///////////////////////////////////////////////////////////////////////////////////////////////
-     ///  definition of variables to read the input data files
-     int NPoints_deuteron[TELNUM][CSINUM][NFiles_deuteron];
-     double CsIV_deuteron[TELNUM][CSINUM][NFiles_deuteron][100];
-     double err_CsIV_deuteron[TELNUM][CSINUM][NFiles_deuteron][100];
-     double Energy_deuteron[TELNUM][CSINUM][NFiles_deuteron][100];
-     double err_Energy_deuteron[TELNUM][CSINUM][NFiles_deuteron][100];
-     double ZA_deuteron[TELNUM][CSINUM][NFiles_deuteron][100];
-
-
-     ///////////////////////////////////////////////////////////////////////////////////////////
-     ///  definition of the number of data points for each input file
-     for(int FileNum=0; FileNum<NFiles_deuteron; FileNum++)
-     {
-       for(int i=0; i<TELNUM; i++)
-       {
-         for(int j=0; j<CSINUM; j++)
-         {
-           NPoints_deuteron[i][j][FileNum]=0;
-         }
-       }
-       ifstream FileIn_deuteron(FileIn_name_deuteron[FileNum]->c_str());
-
-       if(!FileIn_deuteron.is_open())
-       {
-         printf("Error: file%s not found\n", FileIn_name_deuteron[FileNum]->c_str());
-         return;
-       }
-
-       ///////////////////////////////////////////////////////////////////////////////////////
-       ///   Loop, to read each input data file
-       while(!FileIn_deuteron.eof())
-       {
-         std::string LineRead;
-         std::getline(FileIn_deuteron, LineRead);
-
-         LineRead.assign(LineRead.substr(0, LineRead.find('*')));
-         if(LineRead.empty()) continue;
-         if(LineRead.find_first_not_of(' ')==std::string::npos) continue;
-
-         std::istringstream LineStream(LineRead);
-
-         int telnum;
-         int csinum;
-
-         LineStream >> telnum >> csinum;
-         LineStream >> CsIV_deuteron[telnum][csinum][FileNum][NPoints_deuteron[telnum][csinum][FileNum]] >> err_CsIV_deuteron[telnum][csinum][FileNum][NPoints_deuteron[telnum][csinum][FileNum]] >> Energy_deuteron[telnum][csinum][FileNum][NPoints_deuteron[telnum][csinum][FileNum]] >> err_Energy_deuteron[telnum][csinum][FileNum][NPoints_deuteron[telnum][csinum][FileNum]] ;
-
-         ZA_deuteron[telnum][csinum][FileNum][NPoints_deuteron[telnum][csinum][FileNum]]=102;
-
-         NPoints_deuteron[telnum][csinum][FileNum]++;
-       }
-
-       for(int i=0; i<TELNUM; i++)
-       {
-         for(int j=0; j<CSINUM; j++)
-         {
-           if(NPoints_deuteron[i][j][FileNum]!=0)
-           {
-             DataDeuteron[i][j][FileNum] = new TGraphErrors(NPoints_deuteron[i][j][FileNum], Energy_deuteron[i][j][FileNum], CsIV_deuteron[i][j][FileNum], err_Energy_deuteron[i][j][FileNum], err_CsIV_deuteron[i][j][FileNum]);
-             DataDeuteron[i][j][FileNum]->SetMarkerColor(3); // green marker for deuterons
-             DataDeuteron[i][j][FileNum]->SetLineColor(3);
-             DataDeuteron[i][j][FileNum]->SetMarkerStyle(20+FileNum);
-           }
-           else DataDeuteron[i][j][FileNum]=0;
-         }
-       }
-       FileIn_deuteron.close();
-     }
-
-
-    /************************************************************************************************************
-     *                                                                                                          *
-     *                                         For tritons                                                      *
-     *                                                                                                          *
-     ************************************************************************************************************/
-     Int_t NFiles_triton=2;
-     std::string * FileIn_name_triton[NFiles_triton];
-     FileIn_name_triton[0] = new std::string("calibrations/OmitLowDEEPoints_Z01_A03.dat"); //DEE points
-     FileIn_name_triton[1] = new std::string("calibrations/HiRA_CsI_PunchThrough_Z01_A03.dat");  // punch through points
-
-     //////////////////////////////////////////////////////////////////////////////////////////////
-     /// definition of TGraphErrors, TMultiGraph, TLengend
-     TGraphErrors * DataTriton[12][4][NFiles_triton];
-
-     ////////////////////////////////////////////////////////////////////////////////////////////////////
-     /// definition of variables to read the input data files
-
-     int NPoints_triton[TELNUM][CSINUM][NFiles_triton];
-     double CsIV_triton[TELNUM][CSINUM][NFiles_triton][100];
-     double err_CsIV_triton[TELNUM][CSINUM][NFiles_triton][100];
-     double Energy_triton[TELNUM][CSINUM][NFiles_triton][100];
-     double err_Energy_triton[TELNUM][CSINUM][NFiles_triton][100];
-     double ZA_triton[TELNUM][CSINUM][NFiles_triton][100];
-
-
-     /////////////////////////////////////////////////////////////////////////////////////////////////////
-     ///  definition of the number of data points for each input file
-
-     for(int FileNum=0; FileNum<NFiles_triton; FileNum++)
-     {
-       for(int i=0; i<TELNUM; i++)
-       {
-         for(int j=0; j<CSINUM; j++)
-         {
-           NPoints_triton[i][j][FileNum]=0;
-         }
-       }
-       ifstream FileIn_triton(FileIn_name_triton[FileNum]->c_str());
-
-       if(!FileIn_triton.is_open())
-       {
-         printf("Error: file%s not found\n", FileIn_name_triton[FileNum]->c_str());
-         return;
-       }
-
-       ///////////////////////////////////////////////////////////////////////////////////////////////////
-       ///  Loop, to read each input data file
-
-       while(!FileIn_triton.eof())
-       {
-         std::string LineRead;
-         std::getline(FileIn_triton, LineRead);
-
-         LineRead.assign(LineRead.substr(0, LineRead.find('*')));
-         if(LineRead.empty()) continue;
-         if(LineRead.find_first_not_of(' ')==std::string::npos) continue;
-
-         std::istringstream LineStream(LineRead);
-
-         int telnum;
-         int csinum;
-
-         LineStream >> telnum >> csinum;
-         LineStream >> CsIV_triton[telnum][csinum][FileNum][NPoints_triton[telnum][csinum][FileNum]] >> err_CsIV_triton[telnum][csinum][FileNum][NPoints_triton[telnum][csinum][FileNum]] >> Energy_triton[telnum][csinum][FileNum][NPoints_triton[telnum][csinum][FileNum]] >> err_Energy_triton[telnum][csinum][FileNum][NPoints_triton[telnum][csinum][FileNum]] ;
-
-         ZA_triton[telnum][csinum][FileNum][NPoints_triton[telnum][csinum][FileNum]]= 103;
-
-         NPoints_triton[telnum][csinum][FileNum]++;
-       }
-
-       for(int i=0; i<TELNUM; i++)
-       {
-         for(int j=0; j<CSINUM; j++)
-         {
-           if(NPoints_triton[i][j][FileNum]!=0)
-           {
-             DataTriton[i][j][FileNum] = new TGraphErrors(NPoints_triton[i][j][FileNum], Energy_triton[i][j][FileNum], CsIV_triton[i][j][FileNum], err_Energy_triton[i][j][FileNum], err_CsIV_triton[i][j][FileNum]);
-             DataTriton[i][j][FileNum]->SetMarkerColor(4); // blue marker for tritons
-             DataTriton[i][j][FileNum]->SetLineColor(4);
-             DataTriton[i][j][FileNum]->SetMarkerStyle(20+FileNum);
-           }
-           else DataTriton[i][j][FileNum]=0;
-         }
-       }
-       FileIn_triton.close();
-     }
-
-     TMultiGraph * multi[12][4];
-     for(int i=0; i<12; i++)
-     {
-       for(int j=0; j<4; j++)
-       {
-         multi[i][j] = new TMultiGraph();
-         ///////////////////////////////////////////////////////////////////////////
-         ///   Add data for protons
-         for(int FileNum=0; FileNum<NFiles_proton; FileNum++)
-         {
-           if(DataProton[i][j][FileNum]!=0)
-           {
-             multi[i][j]->Add(DataProton[i][j][FileNum]);
-           }
-         }
-
-        ////////////////////////////////////////////////////////////////////////////
-        ///  Add data for deuteron
-         for(int FileNum=0; FileNum<NFiles_deuteron; FileNum++)
-         {
-           if(DataDeuteron[i][j][FileNum]!=0)
-           {
-             multi[i][j]->Add(DataDeuteron[i][j][FileNum]);
-           }
-         }
-
-         ///////////////////////////////////////////////////////////////////////////
-         ///   Add data for triton
-         for(int FileNum=0; FileNum<NFiles_triton; FileNum++)
-         {
-           if(DataTriton[i][j][FileNum]!=0)
-           {
-             multi[i][j]->Add(DataTriton[i][j][FileNum]);
-           }
-         }
-       }
-     }
-
-     //Making the dataset
-    int PointsNum[12][4]={{0}};
-    double CsIV[12][4][1000];
-    double errCsIV[12][4][1000];
-    double CsIE[12][4][1000];
-    double errCsIE[12][4][1000];
-    double ZA[12][4][1000];
+      CsIV_Proton[telnum][csinum][FileNum].push_back(V);
+      errCsIV_Proton[telnum][csinum][FileNum].push_back(errV);
+      CsIE_Proton[telnum][csinum][FileNum].push_back(E);
+      errCsIE_Proton[telnum][csinum][FileNum].push_back(errE);
+    }
 
     for(int i=0; i<12; i++)
     {
       for(int j=0; j<4; j++)
       {
-        for(int FileNum=0; FileNum<NFiles_proton; FileNum++)
-        {
-          for (int k=0; k< NPoints_proton[i][j][FileNum]; k++)
-          {
-            CsIV[i][j][PointsNum[i][j]] = CsIV_proton[i][j][FileNum][k];
-            errCsIV[i][j][PointsNum[i][j]] = err_CsIV_proton[i][j][FileNum][k];
-            CsIE[i][j][PointsNum[i][j]] = Energy_proton[i][j][FileNum][k];
-            errCsIE[i][j][PointsNum[i][j]] = err_Energy_proton[i][j][FileNum][k];
-            ZA[i][j][PointsNum[i][j]] = ZA_proton[i][j][FileNum][k];
-            PointsNum[i][j]++;
-          }
-        }
-        for(int FileNum=0; FileNum<NFiles_deuteron; FileNum++)
-        {
-          for (int k=0; k< NPoints_deuteron[i][j][FileNum]; k++)
-          {
-            CsIV[i][j][PointsNum[i][j]] = CsIV_deuteron[i][j][FileNum][k];
-            errCsIV[i][j][PointsNum[i][j]] = err_CsIV_deuteron[i][j][FileNum][k];
-            CsIE[i][j][PointsNum[i][j]] = Energy_deuteron[i][j][FileNum][k];
-            errCsIE[i][j][PointsNum[i][j]] = err_Energy_deuteron[i][j][FileNum][k];
-            ZA[i][j][PointsNum[i][j]] = ZA_deuteron[i][j][FileNum][k];
-            PointsNum[i][j]++;
-          }
-        }
-        for(int FileNum=0; FileNum<NFiles_triton; FileNum++)
-        {
-          for (int k=0; k< NPoints_triton[i][j][FileNum]; k++)
-          {
-            CsIV[i][j][PointsNum[i][j]] = CsIV_triton[i][j][FileNum][k];
-            errCsIV[i][j][PointsNum[i][j]] = err_CsIV_triton[i][j][FileNum][k];
-            CsIE[i][j][PointsNum[i][j]] = Energy_triton[i][j][FileNum][k];
-            errCsIE[i][j][PointsNum[i][j]] = err_Energy_triton[i][j][FileNum][k];
-            ZA[i][j][PointsNum[i][j]] = ZA_triton[i][j][FileNum][k];
-            PointsNum[i][j]++;
-          }
-        }
+        DataProton[i][j][FileNum] = new TGraphErrors(CsIV_Proton[i][j][FileNum].size(), CsIE_Proton[i][j][FileNum].data(), CsIV_Proton[i][j][FileNum].data(), errCsIE_Proton[i][j][FileNum].data() ,errCsIV_Proton[i][j][FileNum].data());
+        DataProton[i][j][FileNum]->SetMarkerColor(2); // black marker for Protons
+        DataProton[i][j][FileNum]->SetLineColor(2);
+        DataProton[i][j][FileNum]->SetMarkerStyle(20+FileNum);
+      }
+    }
+    FileIn_Proton.close();
+  }
+
+
+  //////////////////////////////////////////////////////////////////////////////
+  ////   retriving data for deuterons
+  //////////////////////////////////////////////////////////////////////////////
+  Int_t NFiles_Deuteron=3;
+  std::string * FileIn_name_Deuteron[NFiles_Deuteron];
+  FileIn_name_Deuteron[0] = new std::string("calibrations/WMUdata_Z01_A02.dat");   // WMU data
+  FileIn_name_Deuteron[1] = new std::string("calibrations/deePointsOmitLow_Z01_A02.dat"); //DEE points
+  FileIn_name_Deuteron[2] = new std::string("calibrations/HiRA_CsI_PunchThrough_Z01_A02.dat");  // punch through points
+
+  //////////////////////////////////////////////////////////////////////////////
+  /// definition of TGraphErrors, TMultiGraph, TLengend
+  TGraphErrors * DataDeuteron[12][4][NFiles_Deuteron];
+
+  //////////////////////////////////////////////////////////////////////////////
+  ///  definition of variables to read the input data files
+  std::vector<double> CsIV_Deuteron[12][4][2];
+  std::vector<double> errCsIV_Deuteron[12][4][2];
+  std::vector<double> CsIE_Deuteron[12][4][2];
+  std::vector<double> errCsIE_Deuteron[12][4][2];
+
+  //////////////////////////////////////////////////////////////////////////////
+  ///  definition of the number of data points for each input file
+  for(int FileNum=0; FileNum<NFiles_Deuteron; FileNum++)
+  {
+    ifstream FileIn_Deuteron(FileIn_name_Deuteron[FileNum]->c_str());
+    if(!FileIn_Deuteron.is_open())
+    {
+      printf("Error: file%s not found\n", FileIn_name_Deuteron[FileNum]->c_str());
+      return;
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+    ///    Loop, to read each input data file
+    while(!FileIn_Deuteron.eof())
+    {
+      std::string LineRead;
+      std::getline(FileIn_Deuteron, LineRead);
+
+      LineRead.assign(LineRead.substr(0, LineRead.find('*')));
+      if(LineRead.empty()) continue;
+      if(LineRead.find_first_not_of(' ')==std::string::npos) continue;
+
+      std::istringstream LineStream(LineRead);
+
+      int telnum;
+      int csinum;
+      double V;
+      double errV;
+      double E;
+      double errE;
+
+      LineStream >> telnum >> csinum >> V >> errV >> E >> errE;
+
+      CsIV_Deuteron[telnum][csinum][FileNum].push_back(V);
+      errCsIV_Deuteron[telnum][csinum][FileNum].push_back(errV);
+      CsIE_Deuteron[telnum][csinum][FileNum].push_back(E);
+      errCsIE_Deuteron[telnum][csinum][FileNum].push_back(errE);
+    }
+
+    for(int i=0; i<12; i++)
+    {
+      for(int j=0; j<4; j++)
+      {
+        DataDeuteron[i][j][FileNum] = new TGraphErrors(CsIV_Deuteron[i][j][FileNum].size(), CsIE_Deuteron[i][j][FileNum].data(), CsIV_Deuteron[i][j][FileNum].data(), errCsIE_Deuteron[i][j][FileNum].data() ,errCsIV_Deuteron[i][j][FileNum].data());
+        DataDeuteron[i][j][FileNum]->SetMarkerColor(3); // black marker for Deuterons
+        DataDeuteron[i][j][FileNum]->SetLineColor(3);
+        DataDeuteron[i][j][FileNum]->SetMarkerStyle(25+FileNum);
+      }
+    }
+    FileIn_Deuteron.close();
+  }
+
+
+  //////////////////////////////////////////////////////////////////////////////
+  ////   retriving data for tritons
+  //////////////////////////////////////////////////////////////////////////////
+  Int_t NFiles_Triton=2;
+  std::string * FileIn_name_Triton[NFiles_Triton];
+  FileIn_name_Triton[0] = new std::string("calibrations/DEEPointsOmitLow_Z01_A03.dat"); //DEE points
+  FileIn_name_Triton[1] = new std::string("calibrations/HiRA_CsI_PunchThrough_Z01_A03.dat");  // punch through points
+
+  //////////////////////////////////////////////////////////////////////////////
+  /// definition of TGraphErrors, TMultiGraph, TLengend
+  TGraphErrors * DataTriton[12][4][NFiles_Triton];
+
+  //////////////////////////////////////////////////////////////////////////////
+  ///  definition of variables to read the input data files
+  std::vector<double> CsIV_Triton[12][4][2];
+  std::vector<double> errCsIV_Triton[12][4][2];
+  std::vector<double> CsIE_Triton[12][4][2];
+  std::vector<double> errCsIE_Triton[12][4][2];
+
+  //////////////////////////////////////////////////////////////////////////////
+  ///  definition of the number of data points for each input file
+  for(int FileNum=0; FileNum<NFiles_Triton; FileNum++)
+  {
+    ifstream FileIn_Triton(FileIn_name_Triton[FileNum]->c_str());
+    if(!FileIn_Triton.is_open())
+    {
+      printf("Error: file%s not found\n", FileIn_name_Triton[FileNum]->c_str());
+      return;
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+    ///    Loop, to read each input data file
+    while(!FileIn_Triton.eof())
+    {
+      std::string LineRead;
+      std::getline(FileIn_Triton, LineRead);
+
+      LineRead.assign(LineRead.substr(0, LineRead.find('*')));
+      if(LineRead.empty()) continue;
+      if(LineRead.find_first_not_of(' ')==std::string::npos) continue;
+
+      std::istringstream LineStream(LineRead);
+
+      int telnum;
+      int csinum;
+      double V;
+      double errV;
+      double E;
+      double errE;
+
+      LineStream >> telnum >> csinum >> V >> errV >> E >> errE;
+
+      CsIV_Triton[telnum][csinum][FileNum].push_back(V);
+      errCsIV_Triton[telnum][csinum][FileNum].push_back(errV);
+      CsIE_Triton[telnum][csinum][FileNum].push_back(E);
+      errCsIE_Triton[telnum][csinum][FileNum].push_back(errE);
+    }
+
+    for(int i=0; i<12; i++)
+    {
+      for(int j=0; j<4; j++)
+      {
+        DataTriton[i][j][FileNum] = new TGraphErrors(CsIV_Triton[i][j][FileNum].size(), CsIE_Triton[i][j][FileNum].data(), CsIV_Triton[i][j][FileNum].data(), errCsIE_Triton[i][j][FileNum].data() ,errCsIV_Triton[i][j][FileNum].data());
+        DataTriton[i][j][FileNum]->SetMarkerColor(6); // black marker for Tritons
+        DataTriton[i][j][FileNum]->SetLineColor(6);
+        DataTriton[i][j][FileNum]->SetMarkerStyle(25+FileNum);
+      }
+    }
+    FileIn_Triton.close();
+  }
+//______________________________________________________________________________
+
+
+//______________________________________________________________________________
+  //////////////////////////////////////////////////////////////////////////////
+  //// create a multigraph to draw all the Hydrogen isotopes
+  TMultiGraph * multiHydrogen[12][4];
+
+  for(int i=0; i<12; i++)
+  {
+    for(int j=0; j<4; j++)
+    {
+      multiHydrogen[i][j] = new TMultiGraph();
+      //////////////////////////////////////////////////////////////////////////
+      ///   Add data for protons
+      for(int FileNum=0; FileNum<NFiles_Proton; FileNum++)
+      {
+        multiHydrogen[i][j]->Add(DataProton[i][j][FileNum]);
+      }
+
+      //////////////////////////////////////////////////////////////////////////
+      ///  Add data for deuteron
+      for(int FileNum=0; FileNum<NFiles_Deuteron; FileNum++)
+      {
+        multiHydrogen[i][j]->Add(DataDeuteron[i][j][FileNum]);
+      }
+
+      //////////////////////////////////////////////////////////////////////////
+      ///   Add data for triton
+      for(int FileNum=0; FileNum<NFiles_Triton; FileNum++)
+      {
+        multiHydrogen[i][j]->Add(DataTriton[i][j][FileNum]);
+      }
+    }
+  }
+//______________________________________________________________________________
+
+
+//______________________________________________________________________________
+////////////////////////////////////////////////////////////////////////////////
+////   Put all the dataset together
+/// Put all the dataset together
+std::vector<double> CsIV_Hydrogen[12][4];
+std::vector<double> errCsIV_Hydrogen[12][4];
+std::vector<double> CsIE_Hydrogen[12][4];
+std::vector<double> errCsIE_Hydrogen[12][4];
+std::vector<double> ZA_Hydrogen[12][4];
+std::vector<double> errZA_Hydrogen[12][4];
+
+for(int i=0; i<12; i++)
+{
+  for(int j=0; j<4; j++)
+  {
+    ////////////////////////////////////////////////////////////////////////////
+    ////   add Proton data
+    for(int FileNum=0; FileNum<NFiles_Proton; FileNum++)
+    {
+      for(int k=0; k< CsIV_Proton[i][j][FileNum].size(); k++)
+      {
+        CsIV_Hydrogen[i][j].push_back(CsIV_Proton[i][j][FileNum][k]);
+        errCsIV_Hydrogen[i][j].push_back(errCsIV_Proton[i][j][FileNum][k]);
+        CsIE_Hydrogen[i][j].push_back(CsIE_Proton[i][j][FileNum][k]);
+        errCsIE_Hydrogen[i][j].push_back(errCsIE_Proton[i][j][FileNum][k]);
+        ZA_Hydrogen[i][j].push_back(101);
+        errZA_Hydrogen[i][j].push_back(0);
       }
     }
 
-    for(int i=0; i<12; i++) {
-      for(int j=0; j<4; j++) {
-        TotGraph[i][j] = new TGraph2DErrors (PointsNum[i][j], CsIE[i][j], ZA[i][j], CsIV[i][j],  errCsIE[i][j], 0, errCsIV[i][j]);
-        TotGraph[i][j]->SetName(Form("TEL%02d_CsI%02d", i, j));
-        TotGraph[i][j]->SetTitle(Form("TEL%02d_CsI%02d", i, j));
-        TotGraph[i][j]->SetMarkerStyle(20);
+    ////////////////////////////////////////////////////////////////////////////
+    ////   add Deuteron data
+    for(int FileNum=0; FileNum<NFiles_Deuteron; FileNum++)
+    {
+      for(int k=0; k< CsIV_Deuteron[i][j][FileNum].size(); k++)
+      {
+        CsIV_Hydrogen[i][j].push_back(CsIV_Deuteron[i][j][FileNum][k]);
+        errCsIV_Hydrogen[i][j].push_back(errCsIV_Deuteron[i][j][FileNum][k]);
+        CsIE_Hydrogen[i][j].push_back(CsIE_Deuteron[i][j][FileNum][k]);
+        errCsIE_Hydrogen[i][j].push_back(errCsIE_Deuteron[i][j][FileNum][k]);
+        ZA_Hydrogen[i][j].push_back(102);
+        errZA_Hydrogen[i][j].push_back(0);
       }
-    }
+     }
 
-   TF2 *f2 = new TF2("fitfunc",fitfunc, 0, 1000, 100, 500, 3);
-   TF1 * fProton = new TF1("fProton", fit_proton, 0, 1000, 3);
-   TF1 * fDeuteron = new TF1("fDeuteron", fit_deuteron, 0, 1000, 3);
-   TF1 * fTriton = new TF1("fTriton", fit_triton, 0, 1000, 3);
-   fProton->SetLineColor(1);
-   fDeuteron->SetLineColor(3);
-   fTriton->SetLineColor(4);
-   f2->SetParameters(0.02,2,1);
-
-   TCanvas *c1 = new TCanvas("c1");
-   for(int i=0; i<TELNUM; i++)
-   {
-     if(i!=5) continue;
-     for(int j=0; j<CSINUM; j++)
+     ///////////////////////////////////////////////////////////////////////////
+     ////   add Triton data
+     for(int FileNum=0; FileNum<NFiles_Triton; FileNum++)
      {
-      TotGraph[i][j]->Fit("fitfunc");
-      fProton->SetParameters(f2->GetParameters());
-      fDeuteron->SetParameters(f2->GetParameters());
-      fTriton->SetParameters(f2->GetParameters());
+       for(int k=0; k< CsIV_Triton[i][j][FileNum].size(); k++)
+       {
+         CsIV_Hydrogen[i][j].push_back(CsIV_Triton[i][j][FileNum][k]);
+         errCsIV_Hydrogen[i][j].push_back(errCsIV_Triton[i][j][FileNum][k]);
+         CsIE_Hydrogen[i][j].push_back(CsIE_Triton[i][j][FileNum][k]);
+         errCsIE_Hydrogen[i][j].push_back(errCsIE_Triton[i][j][FileNum][k]);
+         ZA_Hydrogen[i][j].push_back(103);
+         errZA_Hydrogen[i][j].push_back(0);
+       }
+     }
+   }
+ }
+//______________________________________________________________________________
 
-      multi[i][j]->Draw("APE");
+
+//______________________________________________________________________________
+ ///////////////////////////////////////////////////////////////////////////////
+ /////   Draw all the data set in the same 2D Graphs
+ TGraph2DErrors * TotGraph[12][4];
+ for(int i=0; i<12; i++)
+ {
+   for(int j=0; j<4; j++)
+   {
+     if(CsIV_Hydrogen[i][j].size()==0) continue;
+     TotGraph[i][j] = new TGraph2DErrors(CsIV_Hydrogen[i][j].size(), CsIE_Hydrogen[i][j].data(), ZA_Hydrogen[i][j].data(), CsIV_Hydrogen[i][j].data(), errCsIE_Hydrogen[i][j].data(),  errZA_Hydrogen[i][j].data(), errCsIV_Hydrogen[i][j].data());
+     TotGraph[i][j]->SetName(Form("TEL%02d_CsI_%02d", i, j));
+     TotGraph[i][j]->SetTitle(Form("Hydrogen_TEL%02d_CsI_%02d", i, j));
+     TotGraph[i][j]->SetMarkerStyle(20);
+   }
+ }
+//______________________________________________________________________________
+
+
+//______________________________________________________________________________
+  //////////////////////////////////////////////////////////////////////////////
+  ////
+  TF2 * fHydrogen = new TF2("fHydrogen",FitJerzy, 0, 1000, 100, 500, 3);
+  TF1 * fProton = new TF1("fProton", fit_proton, 0, 1000, 3);
+  TF1 * fDeuteron = new TF1("fDeuteron", fit_deuteron, 0, 1000, 3);
+  TF1 * fTriton = new TF1("fTriton", fit_triton, 0, 1000, 3);
+  fProton->SetLineColor(2);
+  fDeuteron->SetLineColor(3);
+  fTriton->SetLineColor(6);
+  fHydrogen->SetParameters(0.02,2,1);
+//______________________________________________________________________________
+
+
+//______________________________________________________________________________
+  //////////////////////////////////////////////////////////////////////////////
+  //// Draw
+  TCanvas *c1 = new TCanvas("c1");
+  for(int i=0; i<12; i++)
+  {
+    for(int j=0; j<4; j++)
+    {
+      if(CsIV_Hydrogen[i][j].size()==0) continue;
+
+      TotGraph[i][j]->Fit("fHydrogen");
+      fProton->SetParameters(fHydrogen->GetParameters());
+      fDeuteron->SetParameters(fHydrogen->GetParameters());
+      fTriton->SetParameters(fHydrogen->GetParameters());
+
+      multiHydrogen[i][j]->Draw("APE");
       fProton->Draw("SAME");
       fDeuteron->Draw("SAME");
       fTriton->Draw("SAME");
@@ -463,8 +450,6 @@ void FitPDT()
       getchar();
      }
    }
-
-
-
+//______________________________________________________________________________
 
 }
