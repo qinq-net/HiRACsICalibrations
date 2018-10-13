@@ -184,6 +184,7 @@ void FitHorn()
     {
       for(int j=0; j<4; j++)
       {
+      //  if(CsIV_He3[i][j][FileNum].size()==0) continue;
         DataHe3[i][j][FileNum] = new TGraphErrors(CsIV_He3[i][j][FileNum].size(), CsIE_He3[i][j][FileNum].data(), CsIV_He3[i][j][FileNum].data(), errCsIE_He3[i][j][FileNum].data() ,errCsIV_He3[i][j][FileNum].data());
         DataHe3[i][j][FileNum]->SetMarkerColor(1); // black marker for He3s
         DataHe3[i][j][FileNum]->SetLineColor(1);
@@ -256,6 +257,7 @@ void FitHorn()
     {
       for(int j=0; j<4; j++)
       {
+      //  if(CsIV_He4[i][j][FileNum].size()==0) continue;
         DataHe4[i][j][FileNum] = new TGraphErrors(CsIV_He4[i][j][FileNum].size(), CsIE_He4[i][j][FileNum].data(), CsIV_He4[i][j][FileNum].data(), errCsIE_He4[i][j][FileNum].data() ,errCsIV_He4[i][j][FileNum].data());
         DataHe4[i][j][FileNum]->SetMarkerColor(2); // black marker for He4s
         DataHe4[i][j][FileNum]->SetLineColor(2);
@@ -327,6 +329,7 @@ void FitHorn()
     {
       for(int j=0; j<4; j++)
       {
+     //  if(CsIV_He6[i][j][FileNum].size()==0) continue;
         DataHe6[i][j][FileNum] = new TGraphErrors(CsIV_He6[i][j][FileNum].size(), CsIE_He6[i][j][FileNum].data(), CsIV_He6[i][j][FileNum].data(), errCsIE_He6[i][j][FileNum].data() ,errCsIV_He6[i][j][FileNum].data());
         DataHe6[i][j][FileNum]->SetMarkerColor(3); // black marker for He6s
         DataHe6[i][j][FileNum]->SetLineColor(3);
@@ -398,6 +401,7 @@ void FitHorn()
     {
       for(int j=0; j<4; j++)
       {
+    //    if(CsIV_Li6[i][j][FileNum].size()==0) continue;
         DataLi6[i][j][FileNum] = new TGraphErrors(CsIV_Li6[i][j][FileNum].size(), CsIE_Li6[i][j][FileNum].data(), CsIV_Li6[i][j][FileNum].data(), errCsIE_Li6[i][j][FileNum].data() ,errCsIV_Li6[i][j][FileNum].data());
         DataLi6[i][j][FileNum]->SetMarkerColor(4); // black marker for Li6s
         DataLi6[i][j][FileNum]->SetLineColor(4);
@@ -469,6 +473,7 @@ void FitHorn()
     {
       for(int j=0; j<4; j++)
       {
+    //    if(CsIV_Li7[i][j][FileNum].size()==0) continue;
         DataLi7[i][j][FileNum] = new TGraphErrors(CsIV_Li7[i][j][FileNum].size(), CsIE_Li7[i][j][FileNum].data(), CsIV_Li7[i][j][FileNum].data(), errCsIE_Li7[i][j][FileNum].data() ,errCsIV_Li7[i][j][FileNum].data());
         DataLi7[i][j][FileNum]->SetMarkerColor(6); // black marker for Li7s
         DataLi7[i][j][FileNum]->SetLineColor(6);
@@ -540,6 +545,7 @@ void FitHorn()
     {
       for(int j=0; j<4; j++)
       {
+    //    if(CsIV_Li8[i][j][FileNum].size()==0) continue;
         DataLi8[i][j][FileNum] = new TGraphErrors(CsIV_Li8[i][j][FileNum].size(), CsIE_Li8[i][j][FileNum].data(), CsIV_Li8[i][j][FileNum].data(), errCsIE_Li8[i][j][FileNum].data() ,errCsIV_Li8[i][j][FileNum].data());
         DataLi8[i][j][FileNum]->SetMarkerColor(7); // black marker for Li8s
         DataLi8[i][j][FileNum]->SetLineColor(7);
@@ -611,6 +617,7 @@ void FitHorn()
     {
       for(int j=0; j<4; j++)
       {
+    //    if(CsIV_Be7[i][j][FileNum].size()==0) continue;
         DataBe7[i][j][FileNum] = new TGraphErrors(CsIV_Be7[i][j][FileNum].size(), CsIE_Be7[i][j][FileNum].data(), CsIV_Be7[i][j][FileNum].data(), errCsIE_Be7[i][j][FileNum].data() ,errCsIV_Be7[i][j][FileNum].data());
         DataBe7[i][j][FileNum]->SetMarkerColor(9); // black marker for Be7s
         DataBe7[i][j][FileNum]->SetLineColor(9);
@@ -682,6 +689,7 @@ void FitHorn()
     {
       for(int j=0; j<4; j++)
       {
+    //    if(CsIV_Be9[i][j][FileNum].size()==0) continue;
         DataBe9[i][j][FileNum] = new TGraphErrors(CsIV_Be9[i][j][FileNum].size(), CsIE_Be9[i][j][FileNum].data(), CsIV_Be9[i][j][FileNum].data(), errCsIE_Be9[i][j][FileNum].data() ,errCsIV_Be9[i][j][FileNum].data());
         DataBe9[i][j][FileNum]->SetMarkerColor(11); // black marker for Be9s
         DataBe9[i][j][FileNum]->SetLineColor(11);
@@ -702,6 +710,7 @@ void FitHorn()
   {
     for(int j=0; j<4; j++)
     {
+
       multiHeavyIons[i][j] = new TMultiGraph();
       //////////////////////////////////////////////////////////////////////////
       ///// add He3 data
@@ -771,6 +780,7 @@ void FitHorn()
   std::vector<double> errCsIE_HeavyIons[12][4];
   std::vector<double> ZA_HeavyIons[12][4];
   std::vector<double> errZA_HeavyIons[12][4];
+
 
   for(int i=0; i<12; i++)
   {
