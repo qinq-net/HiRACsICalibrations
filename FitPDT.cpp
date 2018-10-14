@@ -331,7 +331,6 @@ void FitPDT()
 //______________________________________________________________________________
 ////////////////////////////////////////////////////////////////////////////////
 ////   Put all the dataset together
-/// Put all the dataset together
 std::vector<double> CsIV_Hydrogen[12][4];
 std::vector<double> errCsIV_Hydrogen[12][4];
 std::vector<double> CsIE_Hydrogen[12][4];
