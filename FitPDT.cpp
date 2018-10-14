@@ -65,7 +65,7 @@ void FitPDT()
 
    ofstream FileOut;
    FileOut.open("calibrations/SimultaneouslyFitParPDT.dat");
-   FileOut << setw(5) <<"*tel" <<"  "<< setw(5) << "csi" <<"  "<<setw(5)<< "Z" <<"  "<<setw(5)<< "A" <<"  "<< setw(25) <<"Fit Formula"
+   FileOut << setw(5) <<"*tel" <<"  "<< setw(5) << "csi" <<"  "<<setw(5)<< "Z" <<"  "<<setw(5)<< "A" <<"  "<< setw(25) <<"Jerzy's Formula "
                <<"  "<<setw(20) << "Par0" <<"  "<< setw(15) <<"Par1"<<"  "<<setw(10)<<"Par2\n";
 
   //////////////////////////////////////////////////////////////////////////////
@@ -451,7 +451,7 @@ for(int i=0; i<12; i++)
       gPad->Update();
     //  getchar();
 
-      ////////////////////////////////////////////////////////////////////////////////
+      //////////////////////////////////////////////////////////////////////////
       /// retrive the fit Parameters
       double par0 = fHydrogen->GetParameter(0);
       double par1 = fHydrogen->GetParameter(1);

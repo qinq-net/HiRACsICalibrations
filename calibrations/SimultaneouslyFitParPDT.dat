@@ -1,4 +1,4 @@
- *tel    csi      Z      A                Fit Formula                  Par0             Par1       Par2
+ *tel    csi      Z      A           Jerzy's Formula                   Par0             Par1       Par2
     0      0      1      1     [0].(pow(x,2)+[1].A.x)/(x+[2].A)       0.00643835     2.19627     2.19614
     0      0      1      2     [0].(pow(x,2)+[1].A.x)/(x+[2].A)       0.00643835     2.19627     2.19614
     0      0      1      3     [0].(pow(x,2)+[1].A.x)/(x+[2].A)       0.00643835     2.19627     2.19614
