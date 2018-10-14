@@ -122,6 +122,10 @@ double fit_Be9(double *x, double *par)
 //------------------------------------------------------------------------------
 void FitHorn()
 {
+  ofstream FileOut;
+  FileOut.open("calibrations/SimultaneouslyFitParHeavyIons.dat");
+  FileOut << setw(5) <<"*tel" <<"  "<< setw(5) << "csi" <<"  "<<setw(5)<< "Z" <<"  "<<setw(5)<< "A" <<"  "<< setw(35) <<"Horn's Formula"
+              <<"  "<<setw(45) << "Par0" <<"  "<< setw(10) <<"Par1"<<"  "<<setw(10)<<"Par2\n";
 
   //////////////////////////////////////////////////////////////////////////////
   ////   retriving data for He3
@@ -953,9 +957,7 @@ void FitHorn()
     {
       if(CsIV_HeavyIons[i][j].size()==0) continue;
 
-      TotGraph[i][j]->Draw("P");
       TotGraph[i][j]->Fit("fHeavyIon");
-      fHeavyIon->Draw("* SAME");
 
       fHe3->SetParameters(fHeavyIon->GetParameters());
       fHe4->SetParameters(fHeavyIon->GetParameters());
@@ -978,7 +980,27 @@ void FitHorn()
 
       gPad->Modified();
       gPad->Update();
-      getchar();
+  //  getchar();
+
+      //////////////////////////////////////////////////////////////////////////
+      /// retrive the fit parameters
+      double par0 = fHeavyIon->GetParameter(0);
+      double par1 = fHeavyIon->GetParameter(1);
+      double par2 = fHeavyIon->GetParameter(2);
+      int Z;
+      int A;
+      for(int k=0; k<ZA_HeavyIons[i][j].size();k++)
+      {
+        Z = (int) ZA_HeavyIons[i][j][k]/100;
+        A = (int) ZA_HeavyIons[i][j][k]%100;
+        if(ZA_HeavyIons[i][j][k]==ZA_HeavyIons[i][j][k+1]) continue;
+        FileOut << setw(5) << i <<"  "<< setw(5) << j <<"  "<<setw(5)<< Z <<"  "<<setw(5)<< A <<"  "<< setw(35)<< "[0]+[1].(x-[2].A.pow(Z,2).log(fabs((x+[2].A.pow(Z,2))/[2].A.pow(Z,2)))" <<"  "<<setw(15) << par0 <<"  "<< setw(10) << par1 <<"  "<<setw(10)<< par2 <<endl;
+      }
+
+
+
+
+
     }
   }
 //______________________________________________________________________________

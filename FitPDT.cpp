@@ -63,9 +63,16 @@ double fit_triton (double *x, double *par)
 void FitPDT()
 {
 
+<<<<<<< HEAD
 //   ofstream FileOut;
 //   FileOut.open("calibrations/pdtFitResult.dat");
 //   FileOut << setw(5) <<"*telnum" <<"  "<< setw(10) << "csinum" <<"  "<< setw(10) << "Par0" <<"  "<<setw(10)<<"Par1"<<"  "<<setw(10)<<"Par2\n";
+=======
+   ofstream FileOut;
+   FileOut.open("calibrations/SimultaneouslyFitParPDT.dat");
+   FileOut << setw(5) <<"*tel" <<"  "<< setw(5) << "csi" <<"  "<<setw(5)<< "Z" <<"  "<<setw(5)<< "A" <<"  "<< setw(25) <<"Jerzy's Formula "
+               <<"  "<<setw(20) << "Par0" <<"  "<< setw(15) <<"Par1"<<"  "<<setw(10)<<"Par2\n";
+>>>>>>> working
 
   //////////////////////////////////////////////////////////////////////////////
   ////   retriving data for protons
@@ -449,7 +456,26 @@ for(int i=0; i<12; i++)
 
       gPad->Modified();
       gPad->Update();
+<<<<<<< HEAD
       getchar();
+=======
+    //  getchar();
+
+      //////////////////////////////////////////////////////////////////////////
+      /// retrive the fit Parameters
+      double par0 = fHydrogen->GetParameter(0);
+      double par1 = fHydrogen->GetParameter(1);
+      double par2 = fHydrogen->GetParameter(2);
+      int Z;
+      int A;
+      for(int k=0; k<ZA_Hydrogen[i][j].size();k++)
+      {
+        Z = (int) ZA_Hydrogen[i][j][k]/100;
+        A = (int) ZA_Hydrogen[i][j][k]%100;
+        if(ZA_Hydrogen[i][j][k]==ZA_Hydrogen[i][j][k+1]) continue;
+        FileOut << setw(5) << i <<"  "<< setw(5) << j <<"  "<<setw(5)<< Z <<"  "<<setw(5)<< A <<"  "<< setw(35)<< "[0].(pow(x,2)+[1].A.x)/(x+[2].A)"<<"  "<<setw(15) << par0 <<"  "<< setw(10) << par1 <<"  "<<setw(10)<< par2 <<endl;
+      }
+>>>>>>> working
      }
    }
 //______________________________________________________________________________
