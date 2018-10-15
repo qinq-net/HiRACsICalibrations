@@ -994,13 +994,8 @@ void FitHorn()
         Z = (int) ZA_HeavyIons[i][j][k]/100;
         A = (int) ZA_HeavyIons[i][j][k]%100;
         if(ZA_HeavyIons[i][j][k]==ZA_HeavyIons[i][j][k+1]) continue;
-        FileOut << setw(5) << i <<"  "<< setw(5) << j <<"  "<<setw(5)<< Z <<"  "<<setw(5)<< A <<"  "<< setw(35)<< "[0]+[1].(x-[2].A.pow(Z,2).log(fabs((x+[2].A.pow(Z,2))/[2].A.pow(Z,2)))" <<"  "<<setw(15) << par0 <<"  "<< setw(10) << par1 <<"  "<<setw(10)<< par2 <<endl;
+        FileOut << setw(5) << i <<"  "<< setw(5) << j <<"  "<<setw(5)<< Z <<"  "<<setw(5)<< A <<"  "<< setw(35)<< "[0]+[1].(x-[2].A.pow(Z,2).log(fabs((x+[2].A.pow(Z,2))/([2].A.pow(Z,2))))" <<"  "<<setw(15) << par0 <<"  "<< setw(10) << par1 <<"  "<<setw(10)<< par2 <<endl;
       }
-
-
-
-
-
     }
   }
 //______________________________________________________________________________

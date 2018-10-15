@@ -182,6 +182,10 @@ double fit_Be9(double *x, double *par)
 //------------------------------------------------------------------------------
 void FitPDTAndHeavyIons()
 {
+  ofstream FileOut;
+  FileOut.open("calibrations/SimultaneouslyFitParForAll.dat");
+  FileOut << setw(5) <<"*tel" <<"  "<< setw(5) << "csi" <<"  "<<setw(5)<< "Z" <<"  "<<setw(5)<< "A" <<"  "<< setw(35) <<"Fit Formula"
+              <<"  "<<setw(45) << "Par0" <<"  "<< setw(10) <<"Par1"<<"  "<<setw(10)<<"Par2\n";
 
 //==============================================================================
 ////////////////////////////////////////////////////////////////////////////////
@@ -1298,7 +1302,7 @@ for(int FileNum=0; FileNum<NFiles_Triton; FileNum++)
   //////////////////////////////////////////////////////////////////////////////
   //// Fit Hydrogen isotopes Light(V)-Energy(MeV) with the Jerzy Lukasik formula
   TF2 * fHydrogen = new TF2("fHydrogen",FitJerzy, 0, 500, 100, 500, 3);
-  fHydrogen->SetParameters(0.2,10,1);
+  fHydrogen->SetParameters(0.01,10,1);
   TF1 * fProton = new TF1("fProton", fit_proton, 0, 500, 3);
   TF1 * fDeuteron = new TF1("fDeuteron", fit_deuteron, 0, 500, 3);
   TF1 * fTriton = new TF1("fTriton", fit_triton, 0, 500, 3);
@@ -1343,15 +1347,23 @@ for(int FileNum=0; FileNum<NFiles_Triton; FileNum++)
       fProton->SetParameters(fHydrogen->GetParameters());
       fDeuteron->SetParameters(fHydrogen->GetParameters());
       fTriton->SetParameters(fHydrogen->GetParameters());
-
-      multiHeavyIons[i][j]->Draw("AP SAME");
-      fProton->Draw("SAME");
-      fDeuteron->Draw("SAME");
-      fTriton->Draw("SAME");
+      //////////////////////////////////////////////////////////////////////////
+      /// retrive the fit Parameters
+      double par0 = fHydrogen->GetParameter(0);
+      double par1 = fHydrogen->GetParameter(1);
+      double par2 = fHydrogen->GetParameter(2);
+      int Z_Hydrogen;
+      int A_Hydrogen;
+      for(int k=0; k<ZA_Hydrogen[i][j].size();k++)
+      {
+        Z_Hydrogen = (int) ZA_Hydrogen[i][j][k]/100;
+        A_Hydrogen = (int) ZA_Hydrogen[i][j][k]%100;
+        if(ZA_Hydrogen[i][j][k]==ZA_Hydrogen[i][j][k+1]) continue;
+        FileOut << setw(5) << i <<"  "<< setw(5) << j <<"  "<<setw(5)<< Z_Hydrogen <<"  "<<setw(5)<< A_Hydrogen <<"  "<< setw(50)<< "[0].(pow(x,2)+[1].A.x)/(x+[2].A)"<<"  "<<setw(35) << par0 <<"  "<< setw(10) << par1 <<"  "<<setw(10)<< par2 <<endl;
+      }
 
    //===========================================================================
       if(CsIV_HeavyIons[i][j].size()==0) continue;
-
       TotGraphHeavyIons[i][j]->Fit("fHeavyIon");
       fHe3->SetParameters(fHeavyIon->GetParameters());
       fHe4->SetParameters(fHeavyIon->GetParameters());
@@ -1362,19 +1374,20 @@ for(int FileNum=0; FileNum<NFiles_Triton; FileNum++)
       fBe7->SetParameters(fHeavyIon->GetParameters());
       fBe9->SetParameters(fHeavyIon->GetParameters());
 
-
-      fHe3->Draw("SAME");
-      fHe4->Draw("SAME");
-      fHe6->Draw("SAME");
-      fLi6->Draw("SAME");
-      fLi7->Draw("SAME");
-      fLi8->Draw("SAME");
-      fBe7->Draw("SAME");
-      fBe9->Draw("SAME");
-
-      gPad->Modified();
-      gPad->Update();
-      getchar();
+      //////////////////////////////////////////////////////////////////////////
+      /// retrive the fit parameters for Heavy Ions
+      double par3 = fHeavyIon->GetParameter(0);
+      double par4 = fHeavyIon->GetParameter(1);
+      double par5 = fHeavyIon->GetParameter(2);
+      int Z_HeavyIons;
+      int A_HeavyIons;
+      for(int k=0; k<ZA_HeavyIons[i][j].size();k++)
+      {
+        Z_HeavyIons = (int) ZA_HeavyIons[i][j][k]/100;
+        A_HeavyIons = (int) ZA_HeavyIons[i][j][k]%100;
+        if(ZA_HeavyIons[i][j][k]==ZA_HeavyIons[i][j][k+1]) continue;
+        FileOut << setw(5) << i <<"  "<< setw(5) << j <<"  "<<setw(5)<< Z_HeavyIons <<"  "<<setw(5)<< A_HeavyIons <<"  "<< setw(35)<< "[0]+[1].(x-[2].A.pow(Z,2).log(fabs((x+[2].A.pow(Z,2))/([2].A.pow(Z,2))))" <<"  "<<setw(12) << par3 <<"  "<< setw(10) << par4 <<"  "<<setw(10)<< par5 <<endl;
+      }
     }
   }
 //______________________________________________________________________________
