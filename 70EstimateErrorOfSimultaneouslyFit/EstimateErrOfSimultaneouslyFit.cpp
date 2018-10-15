@@ -41,13 +41,16 @@ double HornFit(double *x, int A, int Z, double *par)
 
 void EstimateErrOfSimultaneouslyFit()
 {
-  int Z=1;
-  int A=1;
 
-  //==============================================================================
-  ////////////////////////////////////////////////////////////////////////////////
+   ofstream FileOut;
+   FileOut.open("PDT_ErrofDataPointsToFitLine.dat");
+   FileOut<< setw(5) << "*tel" <<"  "<< setw(5) << "csi" <<"  "<< setw(5) << "Z" <<"  "<< setw(5) << "A" <<"  "<< setw(10) << "CsIE(MeV)" <<"  "<< setw(10) << "CsIV-VCal\n";
+
+
+  //============================================================================
+  //////////////////////////////////////////////////////////////////////////////
   ////   retriving data for protons
-  ////////////////////////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////////
   Int_t NFiles_Proton=11;
   std::string * FileIn_name_Proton[NFiles_Proton];
   FileIn_name_Proton[0] = new std::string("../calibrations/WMUdata_Z01_A01.dat");   // WMU data
@@ -64,12 +67,12 @@ void EstimateErrOfSimultaneouslyFit()
   FileIn_name_Proton[10] = new std::string("../calibrations/HiRA_CsI_PunchThrough_Z01_A01.dat");  // punch through points
 
 
-  ////////////////////////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////////
   ///  definition of variables to read the input data files
   std::vector<double> CsIV_Proton[12][4][12];
   std::vector<double> CsIE_Proton[12][4][12];
 
-  ////////////////////////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////////
   ///  definition of the number of data points for each input file
   for(int FileNum=0; FileNum<NFiles_Proton; FileNum++)
   {
@@ -80,7 +83,7 @@ void EstimateErrOfSimultaneouslyFit()
       return;
     }
 
-    //////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
     ///    Loop, to read each input data file
     while(!FileIn_Proton.eof())
     {
@@ -106,6 +109,110 @@ void EstimateErrOfSimultaneouslyFit()
       CsIE_Proton[telnum][csinum][FileNum].push_back(E);
     }
     FileIn_Proton.close();
+  }
+
+
+  //////////////////////////////////////////////////////////////////////////////
+  ////   retriving data for deuterons
+  //////////////////////////////////////////////////////////////////////////////
+  Int_t NFiles_Deuteron=3;
+  std::string * FileIn_name_Deuteron[NFiles_Deuteron];
+  FileIn_name_Deuteron[0] = new std::string("../calibrations/WMUdata_Z01_A02.dat");   // WMU data
+  FileIn_name_Deuteron[1] = new std::string("../calibrations/DEEPointsOmitLow_Z01_A02.dat"); //DEE points
+  FileIn_name_Deuteron[2] = new std::string("../calibrations/HiRA_CsI_PunchThrough_Z01_A02.dat");  // punch through points
+
+  //////////////////////////////////////////////////////////////////////////////
+  ///  definition of variables to read the input data files
+  std::vector<double> CsIV_Deuteron[12][4][3];
+  std::vector<double> CsIE_Deuteron[12][4][3];
+
+  //////////////////////////////////////////////////////////////////////////////
+  ///  definition of the number of data points for each input file
+  for(int FileNum=0; FileNum<NFiles_Deuteron; FileNum++)
+  {
+    ifstream FileIn_Deuteron(FileIn_name_Deuteron[FileNum]->c_str());
+    if(!FileIn_Deuteron.is_open())
+    {
+      printf("Error: file%s not found\n", FileIn_name_Deuteron[FileNum]->c_str());
+      return;
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+    ///    Loop, to read each input data file
+    while(!FileIn_Deuteron.eof())
+    {
+      std::string LineRead;
+      std::getline(FileIn_Deuteron, LineRead);
+
+      LineRead.assign(LineRead.substr(0, LineRead.find('*')));
+      if(LineRead.empty()) continue;
+      if(LineRead.find_first_not_of(' ')==std::string::npos) continue;
+
+      std::istringstream LineStream(LineRead);
+
+      int telnum;
+      int csinum;
+      double V;
+      double errV;
+      double E;
+      double errE;
+
+      LineStream >> telnum >> csinum >> V >> errV >> E >> errE;
+
+      CsIV_Deuteron[telnum][csinum][FileNum].push_back(V);
+      CsIE_Deuteron[telnum][csinum][FileNum].push_back(E);
+    }
+  }
+
+  //////////////////////////////////////////////////////////////////////////////
+  ////   retriving data for tritons
+  //////////////////////////////////////////////////////////////////////////////
+  Int_t NFiles_Triton=2;
+  std::string * FileIn_name_Triton[NFiles_Triton];
+  FileIn_name_Triton[0] = new std::string("../calibrations/DEEPointsOmitLow_Z01_A03.dat"); //DEE points
+  FileIn_name_Triton[1] = new std::string("../calibrations/HiRA_CsI_PunchThrough_Z01_A03.dat");  // punch through points
+
+  //////////////////////////////////////////////////////////////////////////////
+  ///  definition of variables to read the input data files
+  std::vector<double> CsIV_Triton[12][4][2];
+  std::vector<double> CsIE_Triton[12][4][2];
+
+  //////////////////////////////////////////////////////////////////////////////
+  ///  definition of the number of data points for each input file
+  for(int FileNum=0; FileNum<NFiles_Triton; FileNum++)
+  {
+    ifstream FileIn_Triton(FileIn_name_Triton[FileNum]->c_str());
+    if(!FileIn_Triton.is_open())
+    {
+      printf("Error: file%s not found\n", FileIn_name_Triton[FileNum]->c_str());
+      return;
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+    ///    Loop, to read each input data file
+    while(!FileIn_Triton.eof())
+    {
+      std::string LineRead;
+      std::getline(FileIn_Triton, LineRead);
+
+      LineRead.assign(LineRead.substr(0, LineRead.find('*')));
+      if(LineRead.empty()) continue;
+      if(LineRead.find_first_not_of(' ')==std::string::npos) continue;
+
+      std::istringstream LineStream(LineRead);
+
+      int telnum;
+      int csinum;
+      double V;
+      double errV;
+      double E;
+      double errE;
+
+      LineStream >> telnum >> csinum >> V >> errV >> E >> errE;
+
+      CsIV_Triton[telnum][csinum][FileNum].push_back(V);
+      CsIE_Triton[telnum][csinum][FileNum].push_back(E);
+    }
   }
 //______________________________________________________________________________
 
@@ -143,7 +250,6 @@ void EstimateErrOfSimultaneouslyFit()
     double Par2;
 
     LineStream >> telnum >> csinum >> ZValue >> AValue >> FitFormula >> Par0 >> Par1 >> Par2;
-//  printf("TEL=%d CSI=%d Z=%d  A=%d  FitFor=%s Par0=%f\n", telnum, csinum, ZValue, AValue, FitFormula.c_str(), Par0);
 
     ZValues[telnum][csinum].push_back(ZValue);
     AValues[telnum][csinum].push_back(AValue);
@@ -165,16 +271,16 @@ void EstimateErrOfSimultaneouslyFit()
     {
       for(int k=0; k<ZValues[i][j].size(); k++)
       {
+        double par[4];
+        par[0] = par0[i][j][k];
+        par[1] = par1[i][j][k];
+        par[2] = par2[i][j][k];
+        par[3] = AValues[i][j][k];
+
         ////////////////////////////////////////////////////////////////////////
         /// calculation for protons
         if(ZValues[i][j][k]==1 && AValues[i][j][k]==1)
         {
-          double par[4];
-          par[0] = par0[i][j][k];
-          par[1] = par1[i][j][k];
-          par[2] = par2[i][j][k];
-          par[3] = AValues[i][j][k];
-
           for(int FileNum=0; FileNum<NFiles_Proton; FileNum++)
           {
             for(int h=0; h<CsIV_Proton[i][j][FileNum].size(); h++)
@@ -183,14 +289,54 @@ void EstimateErrOfSimultaneouslyFit()
               double VCal = FitJerzy(&CsIE_Proton[i][j][FileNum][h], par);
               double VRelative = CsIV_Proton[i][j][FileNum][h] - VCal;
               ErrOfDataPointsToFitLine[i][j].push_back(VRelative);
-              printf("tel=%d  csi=%d  CsiV=%.5f  VCal=%.5f  diff=%.5f\n", i, j, VRelative);
-
+              FileOut<< setw(5) << i <<"  "<< setw(5) << j <<"  "<< setw(5) << 1 <<"  "<< setw(5) << 1 <<"  "<< setw(10) << CsIE_Proton[i][j][FileNum][h] <<"  "<< setw(10) << VRelative <<endl;
             }
           }
         }
+
+        printf("proton\n");
+
+        ////////////////////////////////////////////////////////////////////////
+        /// calculation for deuterons
+        if(ZValues[i][j][k]==1 && AValues[i][j][k]==2)
+        {
+          for(int FileNum=0; FileNum<NFiles_Deuteron; FileNum++)
+          {
+            if(CsIV_Deuteron[i][j][FileNum].size()==0) continue;
+            for(int h=0; h<CsIV_Deuteron[i][j][FileNum].size(); h++)
+            {
+              printf("I am here\n");
+              CsIE[i][j].push_back(CsIE_Deuteron[i][j][FileNum][h]);
+              double VCal = FitJerzy(&CsIE_Deuteron[i][j][FileNum][h], par);
+              double VRelative = CsIV_Deuteron[i][j][FileNum][h] - VCal;
+              ErrOfDataPointsToFitLine[i][j].push_back(VRelative);
+              FileOut<< setw(5) << i <<"  "<< setw(5) << j <<"  "<< setw(5) << 1 <<"  "<< setw(5) << 2 <<"  "<< setw(10) << CsIE_Proton[i][j][FileNum][h] <<"  "<< setw(10) << VRelative <<endl;
+            }
+          }
+        }
+/*
+        printf("deuteron\n");
+
+        ////////////////////////////////////////////////////////////////////////
+        /// calculation for Tritons
+        if(ZValues[i][j][k]==1 && AValues[i][j][k]==3)
+        {
+          for(int FileNum=0; FileNum<NFiles_Triton; FileNum++)
+          {
+            for(int h=0; h<CsIV_Triton[i][j][FileNum].size(); h++)
+            {
+              CsIE[i][j].push_back(CsIE_Triton[i][j][FileNum][h]);
+              double VCal = FitJerzy(&CsIE_Triton[i][j][FileNum][h], par);
+              double VRelative = CsIV_Triton[i][j][FileNum][h] - VCal;
+              ErrOfDataPointsToFitLine[i][j].push_back(VRelative);
+              FileOut<< setw(5) << i <<"  "<< setw(5) << j <<"  "<< setw(5) << 1 <<"  "<< setw(5) << 3 <<"  "<< setw(10) << CsIE_Proton[i][j][FileNum][h] <<"  "<< setw(10) << VRelative <<endl;
+            }
+          }
+        }
+*/
+        printf("triton\n");
+
       }
-
-
     }
   }
 
