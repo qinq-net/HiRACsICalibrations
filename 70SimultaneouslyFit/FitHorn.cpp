@@ -123,7 +123,7 @@ double fit_Be9(double *x, double *par)
 void FitHorn()
 {
   ofstream FileOut;
-  FileOut.open("calibrations/SimultaneouslyFitParHeavyIons.dat");
+  FileOut.open("../calibrations/SimultaneouslyFitParHeavyIons.dat");
   FileOut << setw(5) <<"*tel" <<"  "<< setw(5) << "csi" <<"  "<<setw(5)<< "Z" <<"  "<<setw(5)<< "A" <<"  "<< setw(35) <<"Horn's Formula"
               <<"  "<<setw(45) << "Par0" <<"  "<< setw(10) <<"Par1"<<"  "<<setw(10)<<"Par2\n";
 
@@ -132,7 +132,7 @@ void FitHorn()
   //////////////////////////////////////////////////////////////////////////////
   Int_t NFiles_He3=1;
   std::string * FileIn_name_He3[NFiles_He3];
-  FileIn_name_He3[0] = new std::string("calibrations/DEEPoints_Z02_A03.dat"); //DEE points
+  FileIn_name_He3[0] = new std::string("../calibrations/DEEPoints_Z02_A03.dat"); //DEE points
 
   //////////////////////////////////////////////////////////////////////////////
   /// definition of TGraphErrors, TMultiGraph, TLengend
@@ -140,10 +140,10 @@ void FitHorn()
 
   //////////////////////////////////////////////////////////////////////////////
   ///  definition of variables to read the input data files
-  std::vector<double> CsIV_He3[12][4][2];
-  std::vector<double> errCsIV_He3[12][4][2];
-  std::vector<double> CsIE_He3[12][4][2];
-  std::vector<double> errCsIE_He3[12][4][2];
+  std::vector<double> CsIV_He3[12][4][1];
+  std::vector<double> errCsIV_He3[12][4][1];
+  std::vector<double> CsIE_He3[12][4][1];
+  std::vector<double> errCsIE_He3[12][4][1];
 
   //////////////////////////////////////////////////////////////////////////////
   ///  definition of the number of data points for each input file
@@ -203,8 +203,8 @@ void FitHorn()
   //////////////////////////////////////////////////////////////////////////////
   Int_t NFiles_He4=2;
   std::string * FileIn_name_He4[NFiles_He4];
-  FileIn_name_He4[0] = new std::string("calibrations/DEEPoints_Z02_A04.dat"); //DEE points
-  FileIn_name_He4[1] = new std::string("calibrations/WMUdata_Z02_A04.dat");
+  FileIn_name_He4[0] = new std::string("../calibrations/DEEPoints_Z02_A04.dat"); //DEE points
+  FileIn_name_He4[1] = new std::string("../calibrations/WMUdata_Z02_A04.dat");
 
   //////////////////////////////////////////////////////////////////////////////
   /// definition of TGraphErrors, TMultiGraph, TLengend
@@ -275,7 +275,7 @@ void FitHorn()
   //////////////////////////////////////////////////////////////////////////////
   Int_t NFiles_He6=1;
   std::string * FileIn_name_He6[NFiles_He6];
-  FileIn_name_He6[0] = new std::string("calibrations/DEEPoints_Z02_A06.dat"); //DEE points
+  FileIn_name_He6[0] = new std::string("../calibrations/DEEPoints_Z02_A06.dat"); //DEE points
 
   //////////////////////////////////////////////////////////////////////////////
   /// definition of TGraphErrors, TMultiGraph, TLengend
@@ -283,10 +283,10 @@ void FitHorn()
 
   //////////////////////////////////////////////////////////////////////////////
   ///  definition of variables to read the input data files
-  std::vector<double> CsIV_He6[12][4][2];
-  std::vector<double> errCsIV_He6[12][4][2];
-  std::vector<double> CsIE_He6[12][4][2];
-  std::vector<double> errCsIE_He6[12][4][2];
+  std::vector<double> CsIV_He6[12][4][1];
+  std::vector<double> errCsIV_He6[12][4][1];
+  std::vector<double> CsIE_He6[12][4][1];
+  std::vector<double> errCsIE_He6[12][4][1];
 
   //////////////////////////////////////////////////////////////////////////////
   ///  definition of the number of data points for each input file
@@ -346,7 +346,7 @@ void FitHorn()
   //////////////////////////////////////////////////////////////////////////////
   Int_t NFiles_Li6=1;
   std::string * FileIn_name_Li6[NFiles_Li6];
-  FileIn_name_Li6[0] = new std::string("calibrations/DEEPoints_Z03_A06.dat"); //DEE points
+  FileIn_name_Li6[0] = new std::string("../calibrations/DEEPoints_Z03_A06.dat"); //DEE points
 
   //////////////////////////////////////////////////////////////////////////////
   /// definition of TGraphErrors, TMultiGraph, TLengend
@@ -354,10 +354,10 @@ void FitHorn()
 
   //////////////////////////////////////////////////////////////////////////////
   ///  definition of variables to read the input data files
-  std::vector<double> CsIV_Li6[12][4][2];
-  std::vector<double> errCsIV_Li6[12][4][2];
-  std::vector<double> CsIE_Li6[12][4][2];
-  std::vector<double> errCsIE_Li6[12][4][2];
+  std::vector<double> CsIV_Li6[12][4][1];
+  std::vector<double> errCsIV_Li6[12][4][1];
+  std::vector<double> CsIE_Li6[12][4][1];
+  std::vector<double> errCsIE_Li6[12][4][1];
 
   //////////////////////////////////////////////////////////////////////////////
   ///  definition of the number of data points for each input file
@@ -417,7 +417,7 @@ void FitHorn()
   //////////////////////////////////////////////////////////////////////////////
   Int_t NFiles_Li7=1;
   std::string * FileIn_name_Li7[NFiles_Li7];
-  FileIn_name_Li7[0] = new std::string("calibrations/DEEPoints_Z03_A07.dat"); //DEE points
+  FileIn_name_Li7[0] = new std::string("../calibrations/DEEPoints_Z03_A07.dat"); //DEE points
 
   //////////////////////////////////////////////////////////////////////////////
   /// definition of TGraphErrors, TMultiGraph, TLengend
@@ -425,10 +425,10 @@ void FitHorn()
 
   //////////////////////////////////////////////////////////////////////////////
   ///  definition of variables to read the input data files
-  std::vector<double> CsIV_Li7[12][4][2];
-  std::vector<double> errCsIV_Li7[12][4][2];
-  std::vector<double> CsIE_Li7[12][4][2];
-  std::vector<double> errCsIE_Li7[12][4][2];
+  std::vector<double> CsIV_Li7[12][4][1];
+  std::vector<double> errCsIV_Li7[12][4][1];
+  std::vector<double> CsIE_Li7[12][4][1];
+  std::vector<double> errCsIE_Li7[12][4][1];
 
   //////////////////////////////////////////////////////////////////////////////
   ///  definition of the number of data points for each input file
@@ -488,7 +488,7 @@ void FitHorn()
   //////////////////////////////////////////////////////////////////////////////
   Int_t NFiles_Li8=1;
   std::string * FileIn_name_Li8[NFiles_Li8];
-  FileIn_name_Li8[0] = new std::string("calibrations/DEEPoints_Z03_A08.dat"); //DEE points
+  FileIn_name_Li8[0] = new std::string("../calibrations/DEEPoints_Z03_A08.dat"); //DEE points
 
   //////////////////////////////////////////////////////////////////////////////
   /// definition of TGraphErrors, TMultiGraph, TLengend
@@ -496,10 +496,10 @@ void FitHorn()
 
   //////////////////////////////////////////////////////////////////////////////
   ///  definition of variables to read the input data files
-  std::vector<double> CsIV_Li8[12][4][2];
-  std::vector<double> errCsIV_Li8[12][4][2];
-  std::vector<double> CsIE_Li8[12][4][2];
-  std::vector<double> errCsIE_Li8[12][4][2];
+  std::vector<double> CsIV_Li8[12][4][1];
+  std::vector<double> errCsIV_Li8[12][4][1];
+  std::vector<double> CsIE_Li8[12][4][1];
+  std::vector<double> errCsIE_Li8[12][4][1];
 
   //////////////////////////////////////////////////////////////////////////////
   ///  definition of the number of data points for each input file
@@ -559,7 +559,7 @@ void FitHorn()
   //////////////////////////////////////////////////////////////////////////////
   Int_t NFiles_Be7=1;
   std::string * FileIn_name_Be7[NFiles_Be7];
-  FileIn_name_Be7[0] = new std::string("calibrations/DEEPoints_Z04_A07.dat"); //DEE points
+  FileIn_name_Be7[0] = new std::string("../calibrations/DEEPoints_Z04_A07.dat"); //DEE points
 
   //////////////////////////////////////////////////////////////////////////////
   /// definition of TGraphErrors, TMultiGraph, TLengend
@@ -567,10 +567,10 @@ void FitHorn()
 
   //////////////////////////////////////////////////////////////////////////////
   ///  definition of variables to read the input data files
-  std::vector<double> CsIV_Be7[12][4][2];
-  std::vector<double> errCsIV_Be7[12][4][2];
-  std::vector<double> CsIE_Be7[12][4][2];
-  std::vector<double> errCsIE_Be7[12][4][2];
+  std::vector<double> CsIV_Be7[12][4][1];
+  std::vector<double> errCsIV_Be7[12][4][1];
+  std::vector<double> CsIE_Be7[12][4][1];
+  std::vector<double> errCsIE_Be7[12][4][1];
 
   //////////////////////////////////////////////////////////////////////////////
   ///  definition of the number of data points for each input file
@@ -630,7 +630,7 @@ void FitHorn()
   //////////////////////////////////////////////////////////////////////////////
   Int_t NFiles_Be9=1;
   std::string * FileIn_name_Be9[NFiles_Be9];
-  FileIn_name_Be9[0] = new std::string("calibrations/DEEPoints_Z04_A09.dat"); //DEE points
+  FileIn_name_Be9[0] = new std::string("../calibrations/DEEPoints_Z04_A09.dat"); //DEE points
 
   //////////////////////////////////////////////////////////////////////////////
   /// definition of TGraphErrors, TMultiGraph, TLengend
@@ -638,10 +638,10 @@ void FitHorn()
 
   //////////////////////////////////////////////////////////////////////////////
   ///  definition of variables to read the input data files
-  std::vector<double> CsIV_Be9[12][4][2];
-  std::vector<double> errCsIV_Be9[12][4][2];
-  std::vector<double> CsIE_Be9[12][4][2];
-  std::vector<double> errCsIE_Be9[12][4][2];
+  std::vector<double> CsIV_Be9[12][4][1];
+  std::vector<double> errCsIV_Be9[12][4][1];
+  std::vector<double> CsIE_Be9[12][4][1];
+  std::vector<double> errCsIE_Be9[12][4][1];
 
   //////////////////////////////////////////////////////////////////////////////
   ///  definition of the number of data points for each input file
@@ -699,7 +699,7 @@ void FitHorn()
 
 //______________________________________________________________________________
   //////////////////////////////////////////////////////////////////////////////
-  ////// creating a multigraph to draw all the Heavy calibrations
+  ////// creating a multigraph to draw all the Heavy ../calibrations
   TMultiGraph * multiHeavyIons[12][4];
 
   for(int i=0; i<12; i++)
