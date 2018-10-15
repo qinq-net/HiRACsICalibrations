@@ -16,7 +16,8 @@ void DEEFitChannel()
    FileOut[3].open("FitResult/FitParameters_3He.dat");
    FileOut[4].open("FitResult/FitParameters_4He.dat");
 
-   FileOut[0] << setw(5) <<"*telnum" <<"  "<< setw(10) << "csinum" <<"  "<<setw(10)<< "Z" <<"  "<<setw(10)<<"A"<<"  "<< setw(10) <<"Fit Formula"<<"  "<<setw(10) << "Par0" <<"  "<<setw(10)<<"Par1"<<"  "<<setw(10)<<"Par2\n";
+   FileOut[0] << setw(5) <<"*telnum" <<"  "<< setw(10) << "csinum" <<"  "<<setw(10)<< "Z" <<"  "<<setw(10)<<"A"<<"  "<< setw(10) <<"Fit Formula"<<"  "<<setw(10) << "Par0"
+              <<"  "<<setw(10)<<"Par1"<<"  "<<setw(10)<<"Par2\n";
 
 
 
