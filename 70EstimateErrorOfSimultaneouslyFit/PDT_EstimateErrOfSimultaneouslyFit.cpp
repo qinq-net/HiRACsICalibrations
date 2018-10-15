@@ -19,23 +19,6 @@ double FitJerzy(double *x, double *par)
 //______________________________________________________________________________
 
 
-//______________________________________________________________________________
-////////////////////////////////////////////////////////////////////////////////
-/// definition of Horn formula to fitting isotopes from Z=2 to Z=4
-/// this formula is given in the following paper:
-//// D.Horn et al, NIM A320(1992) 273-276
-////////////////////////////////////////////////////////////////////////////////
-double HornFit(double *x, int A, int Z, double *par)
-{
-  double consterm = par[2]*A*pow(Z,2);
-  double lineterm = x[0]+consterm;
-  double logterm = consterm*log(abs(lineterm/consterm));
-  double light = par[0]+par[1]*(x[0]-logterm);
-  return light;
-}
-
-//______________________________________________________________________________
-
 
 //______________________________________________________________________________
 
@@ -46,10 +29,6 @@ void PDT_EstimateErrOfSimultaneouslyFit()
    FileOut.open("PDT_ErrofDataPointsToFitLine.dat");
    FileOut<< setw(5) << "*tel" <<"  "<< setw(5) << "csi" <<"  "<< setw(5) << "Z" <<"  "<< setw(5) << "A" <<"  "<< setw(10) << "CsIE(MeV)" <<"  "<< setw(10) << "CsIV-VCal"
          <<"  "<< setw(10) << "CsIV" <<"  "<< setw(10) <<"VCal\n";
-
-   FileOut<< setw(5) << "*tel" <<"  "<< setw(5) << "csi" <<"  "<< setw(5) << "Z" <<"  "<< setw(5) << "A" <<"  "<< setw(10) << "CsIE(MeV)" <<"  "<< setw(10) << "CsIV-VCal\n";
-
-
 
   //============================================================================
   //////////////////////////////////////////////////////////////////////////////
@@ -336,59 +315,9 @@ void PDT_EstimateErrOfSimultaneouslyFit()
           }
         }
       //========================================================================
-
-              FileOut<< setw(5) << i <<"  "<< setw(5) << j <<"  "<< setw(5) << 1 <<"  "<< setw(5) << 1 <<"  "<< setw(10) << CsIE_Proton[i][j][FileNum][h] <<"  "<< setw(10) << VRelative <<endl;
-            }
-          }
-        }
-
-        printf("proton\n");
-
-        ////////////////////////////////////////////////////////////////////////
-        /// calculation for deuterons
-        if(ZValues[i][j][k]==1 && AValues[i][j][k]==2)
-        {
-          for(int FileNum=0; FileNum<NFiles_Deuteron; FileNum++)
-          {
-            if(CsIV_Deuteron[i][j][FileNum].size()==0) continue;
-            for(int h=0; h<CsIV_Deuteron[i][j][FileNum].size(); h++)
-            {
-              printf("I am here\n");
-              CsIE[i][j].push_back(CsIE_Deuteron[i][j][FileNum][h]);
-              double VCal = FitJerzy(&CsIE_Deuteron[i][j][FileNum][h], par);
-              double VRelative = CsIV_Deuteron[i][j][FileNum][h] - VCal;
-              ErrOfDataPointsToFitLine[i][j].push_back(VRelative);
-              FileOut<< setw(5) << i <<"  "<< setw(5) << j <<"  "<< setw(5) << 1 <<"  "<< setw(5) << 2 <<"  "<< setw(10) << CsIE_Proton[i][j][FileNum][h] <<"  "<< setw(10) << VRelative <<endl;
-            }
-          }
-        }
-/*
-        printf("deuteron\n");
-
-        ////////////////////////////////////////////////////////////////////////
-        /// calculation for Tritons
-        if(ZValues[i][j][k]==1 && AValues[i][j][k]==3)
-        {
-          for(int FileNum=0; FileNum<NFiles_Triton; FileNum++)
-          {
-            for(int h=0; h<CsIV_Triton[i][j][FileNum].size(); h++)
-            {
-              CsIE[i][j].push_back(CsIE_Triton[i][j][FileNum][h]);
-              double VCal = FitJerzy(&CsIE_Triton[i][j][FileNum][h], par);
-              double VRelative = CsIV_Triton[i][j][FileNum][h] - VCal;
-              ErrOfDataPointsToFitLine[i][j].push_back(VRelative);
-              FileOut<< setw(5) << i <<"  "<< setw(5) << j <<"  "<< setw(5) << 1 <<"  "<< setw(5) << 3 <<"  "<< setw(10) << CsIE_Proton[i][j][FileNum][h] <<"  "<< setw(10) << VRelative <<endl;
-            }
-          }
-        }
-*/
-        printf("triton\n");
-
       }
     }
   }
 //______________________________________________________________________________
-
-
 
 }
