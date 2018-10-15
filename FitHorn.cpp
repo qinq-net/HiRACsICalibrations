@@ -980,7 +980,7 @@ void FitHorn()
 
       gPad->Modified();
       gPad->Update();
-  //  getchar();
+      getchar();
 
       //////////////////////////////////////////////////////////////////////////
       /// retrive the fit parameters

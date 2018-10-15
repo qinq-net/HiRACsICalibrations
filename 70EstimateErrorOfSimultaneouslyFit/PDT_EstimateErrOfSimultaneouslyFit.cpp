@@ -240,6 +240,7 @@ void PDT_EstimateErrOfSimultaneouslyFit()
     par1[telnum][csinum].push_back(Par1);
     par2[telnum][csinum].push_back(Par2);
   }
+  FileIn.close();
 //______________________________________________________________________________
 
 
@@ -318,6 +319,68 @@ void PDT_EstimateErrOfSimultaneouslyFit()
       }
     }
   }
+  FileOut.close();
 //______________________________________________________________________________
+
+
+//______________________________________________________________________________
+  ////////////////////////////////////////////////////////////////////////////////
+  ////  Read data from FileOut
+  ifstream FileRead;
+  FileRead.open("PDT_ErrofDataPointsToFitLine.dat");
+
+  std::vector<int> Zread[12][4];
+  std::vector<int> Aread[12][4];
+  std::vector<double> CsIEread[12][4];
+  std::vector<double> CsIV_VCalread[12][4];
+
+  while(FileRead.is_open() && !FileRead.eof())
+  {
+    std::string LineRead;
+    std::getline(FileRead, LineRead);
+
+    LineRead.assign(LineRead.substr(0, LineRead.find('*')));
+    if(LineRead.empty()) continue;
+    if(LineRead.find_first_not_of(' ')==std::string::npos) continue;
+
+    std::istringstream LineStream(LineRead);
+
+    int telnum;
+    int csinum;
+    int ZValue;
+    int AValue;
+    double E;
+    double errV;
+
+
+    LineStream >> telnum >> csinum >> ZValue >> AValue >> E >> errV;
+
+    ZValues[telnum][csinum].push_back(ZValue);
+    AValues[telnum][csinum].push_back(AValue);
+    CsIEread[telnum][csinum].push_back(E);
+    CsIV_VCalread[telnum][csinum].push_back(errV);
+  }
+  FileRead.close();
+//______________________________________________________________________________
+
+
+//______________________________________________________________________________
+////////////////////////////////////////////////////////////////////////////////
+//// draw
+  for(int i=0; i<12; i++)
+  {
+    for(int j=0; j<4; j++)
+    {
+
+    }
+  }
+
+
+
+
+
+
+
+
 
 }
