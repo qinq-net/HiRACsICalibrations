@@ -7,18 +7,7 @@
 double HornFit(double *x, double *par)
 {
   // x[0]--E, x[1]--A
-  if(x[1]==203 || x[1]==204 || x[1]==206)
-  {
-    int A = Int_t(x[1])%100;
-    int Z = Int_t(x[1])/100;
-    double consterm_par2 = (par[3]+par[4])*A*pow(Z,2);
-    double consterm_par3 = par[4]*A*pow(Z,2);
-    double consterm_par4 = par[2]*A*pow(Z,2);
-    double logterm = consterm_par4*log(fabs((x[0]+consterm_par4)/consterm_par4));
-    double light = par[0]+par[1]*(x[0]*((x[0]+consterm_par2)/(x[0]+consterm_par3))-logterm);
-    return light;
-  }
-  if(x[1]==206 || x[1]==306 || x[1]==307 || x[1]==308 || x[1]==407 || x[1]==409)
+  if(x[1]==203 || x[1]==204 || x[1]==206 || x[1]==306 || x[1]==307 || x[1]==308 || x[1]==407 || x[1]==409)
   {
     int A = Int_t(x[1])%100;
     int Z = Int_t(x[1])/100;
@@ -36,11 +25,10 @@ double HornFit(double *x, double *par)
 ///  definition of fitting function of 3He
 double fit_He3(double *x, double *par)
 {
-  double consterm_par2 = (par[3]+par[4])*3*pow(2,2);
-  double consterm_par3 = par[4]*3*pow(2,2);
-  double consterm_par4 = par[2]*3*pow(2,2);
-  double logterm = consterm_par4*log(fabs((x[0]+consterm_par4)/consterm_par4));
-  double light = par[0]+par[1]*(x[0]*((x[0]+consterm_par2)/(x[0]+consterm_par3))-logterm);
+  double consterm = par[2]*3*pow(2,2);
+  double lineterm = x[0]+consterm;
+  double logterm = consterm*log(lineterm/consterm);
+  double light = par[0]+par[1]*(x[0]-logterm);
   return light;
 }
 //______________________________________________________________________________
@@ -49,11 +37,10 @@ double fit_He3(double *x, double *par)
 ///  definition of fitting function of He4
 double fit_He4(double *x, double *par)
 {
-  double consterm_par2 = (par[3]+par[4])*4*pow(2,2);
-  double consterm_par3 = par[4]*4*pow(2,2);
-  double consterm_par4 = par[2]*4*pow(2,2);
-  double logterm = consterm_par4*log(fabs((x[0]+consterm_par4)/consterm_par4));
-  double light = par[0]+par[1]*(x[0]*((x[0]+consterm_par2)/(x[0]+consterm_par3))-logterm);
+  double consterm = par[2]*4*pow(2,2);
+  double lineterm = x[0]+consterm;
+  double logterm = consterm*log(lineterm/consterm);
+  double light = par[0]+par[1]*(x[0]-logterm);
   return light;
 }
 //______________________________________________________________________________
@@ -938,17 +925,15 @@ void FitHorn()
 //______________________________________________________________________________
   /////////////////////////////////////////////////////////////////////////
   /////  Fit Heavy Ions Light(V)-Energy(MeV) with the Horn formula
-  TF2 *fHeavyIon= new TF2("fHeavyIon",HornFit,0,500,200,500,5);
-  fHeavyIon->SetParameters(0.001,0.01,0.1,0.1,0.1);
-  fHeavyIon->SetParLimits(3,0,5);
-  fHeavyIon->SetParLimits(4,0,5);
+  TF2 *fHeavyIon= new TF2("fHeavyIon",HornFit,0,500,200,500,3);
+  fHeavyIon->SetParameters(0.1,0.1,0.1);
 
-  TF1 * fHe3 = new TF1("fHe3",fit_He3,0,500,5);
-  TF1 * fHe4 = new TF1("fHe4",fit_He4,0,500,5);
+  TF1 * fHe3 = new TF1("fHe3",fit_He3,0,500,3);
+  TF1 * fHe4 = new TF1("fHe4",fit_He4,0,500,3);
   TF1 * fHe6 = new TF1("fHe6",fit_He6,0,500,3);
   TF1 * fLi6 = new TF1("fLi6",fit_Li6,0,500,3);
-  TF1 * fLi7 = new TF1("fLi7",fit_Li7,0,500,3);
-  TF1 * fLi8 = new TF1("fLi8",fit_Li8,0,500,3);
+  TF1 * fLi7 = new TF1("fHe3",fit_Li7,0,500,3);
+  TF1 * fLi8 = new TF1("fHe3",fit_Li8,0,500,3);
   TF1 * fBe7 = new TF1("fBe7",fit_Be7,0,500,3);
   TF1 * fBe9 = new TF1("fBe9",fit_Be9,0,500,3);
 
@@ -983,7 +968,6 @@ void FitHorn()
       fBe7->SetParameters(fHeavyIon->GetParameters());
       fBe9->SetParameters(fHeavyIon->GetParameters());
 
-      multiHeavyIons[i][j]->SetTitle(Form("TEL%02d_CSI%02d",i,j));
       multiHeavyIons[i][j]->Draw("AP");
       fHe3->Draw("SAME");
       fHe4->Draw("SAME");

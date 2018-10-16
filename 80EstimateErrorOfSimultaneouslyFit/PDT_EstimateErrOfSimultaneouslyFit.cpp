@@ -24,6 +24,8 @@ double FitJerzy(double *x, double *par)
 
 void PDT_EstimateErrOfSimultaneouslyFit()
 {
+   const int Z=1;
+   const int A=3;
 
    ofstream FileOut;
    FileOut.open("PDT_ErrofDataPointsToFitLine.dat");
@@ -333,6 +335,7 @@ void PDT_EstimateErrOfSimultaneouslyFit()
   std::vector<int> Aread[12][4];
   std::vector<double> CsIEread[12][4];
   std::vector<double> CsIV_VCalread[12][4];
+  std::vector<double> PecentageCsIV_VCalread[12][4];
 
   while(FileRead.is_open() && !FileRead.eof())
   {
@@ -351,14 +354,19 @@ void PDT_EstimateErrOfSimultaneouslyFit()
     int AValue;
     double E;
     double errV;
+    double csiV;
+    double Vcal;
+    double pecentage;
 
 
-    LineStream >> telnum >> csinum >> ZValue >> AValue >> E >> errV;
+    LineStream >> telnum >> csinum >> ZValue >> AValue >> E >> errV >> csiV >> Vcal;
+    pecentage = errV/Vcal;
 
-    ZValues[telnum][csinum].push_back(ZValue);
-    AValues[telnum][csinum].push_back(AValue);
+    Zread[telnum][csinum].push_back(ZValue);
+    Aread[telnum][csinum].push_back(AValue);
     CsIEread[telnum][csinum].push_back(E);
     CsIV_VCalread[telnum][csinum].push_back(errV);
+    PecentageCsIV_VCalread[telnum][csinum].push_back(pecentage);
   }
   FileRead.close();
 //______________________________________________________________________________
@@ -366,14 +374,114 @@ void PDT_EstimateErrOfSimultaneouslyFit()
 
 //______________________________________________________________________________
 ////////////////////////////////////////////////////////////////////////////////
-//// draw
+//// retrieve data into protons, deuterons, and tritons
+  std::vector<double> CsIEread_proton[12][4];
+  std::vector<double> CsIV_VCalread_proton[12][4];
+  std::vector<double> Pecentage_proton[12][4];
+  std::vector<double> CsIEread_deuteron[12][4];
+  std::vector<double> CsIV_VCalread_deuteron[12][4];
+  std::vector<double> Pecentage_deuteron[12][4];
+  std::vector<double> CsIEread_triton[12][4];
+  std::vector<double> CsIV_VCalread_triton[12][4];
+  std::vector<double> Pecentage_triton[12][4];
+
   for(int i=0; i<12; i++)
   {
     for(int j=0; j<4; j++)
     {
+       if(CsIEread[i][j].size()==0) continue;
+       for(int k=0; k<CsIEread[i][j].size(); k++)
+       {
+         if((Zread[i][j][k]==1) && Aread[i][j][k]==1)
+         {
+           CsIEread_proton[i][j].push_back(CsIEread[i][j][k]);
+           CsIV_VCalread_proton[i][j].push_back(CsIV_VCalread[i][j][k]);
+           Pecentage_proton[i][j].push_back(PecentageCsIV_VCalread[i][j][k]);
+         }
 
-    }
-  }
+         if((Zread[i][j][k]==1) && Aread[i][j][k]==2)
+         {
+           CsIEread_deuteron[i][j].push_back(CsIEread[i][j][k]);
+           CsIV_VCalread_deuteron[i][j].push_back(CsIV_VCalread[i][j][k]);
+           Pecentage_deuteron[i][j].push_back(PecentageCsIV_VCalread[i][j][k]);
+         }
+
+          if((Zread[i][j][k]==1) && Aread[i][j][k]==3)
+         {
+           CsIEread_triton[i][j].push_back(CsIEread[i][j][k]);
+           CsIV_VCalread_triton[i][j].push_back(CsIV_VCalread[i][j][k]);
+           Pecentage_triton[i][j].push_back(PecentageCsIV_VCalread[i][j][k]);
+         }
+       }
+     }
+   }
+//______________________________________________________________________________
+
+
+//______________________________________________________________________________
+////////////////////////////////////////////////////////////////////////////////
+//// create graphs
+   TMultiGraph * multigraph[12][4];
+   TGraph * graph_proton[12][4];
+   TGraph * graph_deuteron[12][4];
+   TGraph * graph_triton[12][4];
+
+   for(int i=0; i<12; i++)
+   {
+     for(int j=0; j<4; j++)
+     {
+       multigraph[i][j] = new TMultiGraph();
+       /////////////////////////////////////////////////////////////////////////
+       //// create graph for protons
+       graph_proton[i][j] = new TGraph(CsIEread_proton[i][j].size(),CsIEread_proton[i][j].data(), Pecentage_proton[i][j].data());
+       graph_proton[i][j]->SetTitle(Form("Tel%2d_%2d_%d_%d", i, j, Z, A));
+       multigraph[i][j]->Add(graph_proton[i][j]);
+
+       /////////////////////////////////////////////////////////////////////////
+       //// create graph for deuterons
+       graph_deuteron[i][j] = new TGraph(CsIEread_deuteron[i][j].size(),CsIEread_deuteron[i][j].data(), Pecentage_deuteron[i][j].data());
+       multigraph[i][j]->Add(graph_deuteron[i][j]);
+
+       /////////////////////////////////////////////////////////////////////////
+       //// create graph for tritons
+       graph_triton[i][j] = new TGraph(CsIEread_triton[i][j].size(),CsIEread_triton[i][j].data(), Pecentage_triton[i][j].data());
+       multigraph[i][j]->Add(graph_triton[i][j]);
+     }
+   }
+//______________________________________________________________________________
+
+
+//______________________________________________________________________________
+   /////////////////////////////////////////////////////////////////////////////
+   ///// Draw
+   TCanvas *c1 = new TCanvas("c1","",1200,800);
+   for(int i=0; i<12; i++)
+   {
+
+     for(int j=0; j<4; j++)
+     {
+
+       if(Z==1 && A==1)
+       {
+         graph_proton[i][j]->Draw("AP*");
+
+       }
+
+       if(Z==1 && A==2)
+       {
+         graph_deuteron[i][j]->Draw("AP*");
+       }
+
+       if(Z==1 && A==3)
+       {
+         graph_triton[i][j]->Draw("AP*");
+       }
+
+       gPad->Modified();
+       gPad->Update();
+       getchar();
+     }
+   }
 
 
 
@@ -383,4 +491,7 @@ void PDT_EstimateErrOfSimultaneouslyFit()
 
 
 
+
+
+//______________________________________________________________________________
 }

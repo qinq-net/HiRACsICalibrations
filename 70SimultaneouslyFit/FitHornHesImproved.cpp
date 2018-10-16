@@ -441,7 +441,7 @@ void FitHornHesImproved()
       fHe4->SetParameters(fHeavyIonImproved->GetParameters());
       fHe6->SetParameters(fHeavyIonImproved->GetParameters());
 
-      multiHeavyIons[i][j]->Draw("APL");
+      multiHeavyIons[i][j]->Draw("AP");
       fHe3->Draw("SAME");
       fHe4->Draw("SAME");
       fHe6->Draw("SAME");
