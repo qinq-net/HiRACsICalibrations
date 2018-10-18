@@ -360,7 +360,7 @@ void PDT_EstimateErrOfSimultaneouslyFit()
 
 
     LineStream >> telnum >> csinum >> ZValue >> AValue >> E >> errV >> csiV >> Vcal;
-    pecentage = errV/Vcal;
+    pecentage = errV/Vcal*100;
 
     Zread[telnum][csinum].push_back(ZValue);
     Aread[telnum][csinum].push_back(AValue);
@@ -434,17 +434,22 @@ void PDT_EstimateErrOfSimultaneouslyFit()
        /////////////////////////////////////////////////////////////////////////
        //// create graph for protons
        graph_proton[i][j] = new TGraph(CsIEread_proton[i][j].size(),CsIEread_proton[i][j].data(), Pecentage_proton[i][j].data());
-       graph_proton[i][j]->SetTitle(Form("Tel%2d_%2d_%d_%d", i, j, Z, A));
+       graph_proton[i][j]->SetMarkerStyle(25);
+       graph_proton[i][j]->SetMarkerColor(2);
        multigraph[i][j]->Add(graph_proton[i][j]);
 
        /////////////////////////////////////////////////////////////////////////
        //// create graph for deuterons
        graph_deuteron[i][j] = new TGraph(CsIEread_deuteron[i][j].size(),CsIEread_deuteron[i][j].data(), Pecentage_deuteron[i][j].data());
+       graph_deuteron[i][j]->SetMarkerStyle(25);
+       graph_deuteron[i][j]->SetMarkerColor(2);
        multigraph[i][j]->Add(graph_deuteron[i][j]);
 
        /////////////////////////////////////////////////////////////////////////
        //// create graph for tritons
        graph_triton[i][j] = new TGraph(CsIEread_triton[i][j].size(),CsIEread_triton[i][j].data(), Pecentage_triton[i][j].data());
+       graph_triton[i][j]->SetMarkerStyle(25);
+       graph_triton[i][j]->SetMarkerColor(2);
        multigraph[i][j]->Add(graph_triton[i][j]);
      }
    }
@@ -463,18 +468,33 @@ void PDT_EstimateErrOfSimultaneouslyFit()
 
        if(Z==1 && A==1)
        {
-         graph_proton[i][j]->Draw("AP*");
+         graph_proton[i][j]->Draw("AP");
+         graph_proton[i][j]->SetTitle(Form("Tel%02d_%02d_Z%02d_A%02d",i,j,Z,A));
+         graph_proton[i][j]->GetXaxis()->SetTitle("LISEEnergy(MeV)");
+         graph_proton[i][j]->GetXaxis()->CenterTitle(1);
+         graph_proton[i][j]->GetYaxis()->SetTitle("(CsIV-VCal)/Vcal(%)");
+         graph_proton[i][j]->GetYaxis()->CenterTitle(1);
 
        }
 
        if(Z==1 && A==2)
        {
-         graph_deuteron[i][j]->Draw("AP*");
+         graph_deuteron[i][j]->Draw("AP");
+         graph_deuteron[i][j]->SetTitle(Form("Tel%02d_%02d_Z%02d_A%02d",i,j,Z,A));
+         graph_deuteron[i][j]->GetXaxis()->SetTitle("LISEEnergy(MeV)");
+         graph_deuteron[i][j]->GetXaxis()->CenterTitle(1);
+         graph_deuteron[i][j]->GetYaxis()->SetTitle("(CsIV-VCal)/Vcal(%)");
+         graph_deuteron[i][j]->GetYaxis()->CenterTitle(1);
        }
 
        if(Z==1 && A==3)
        {
-         graph_triton[i][j]->Draw("AP*");
+         graph_triton[i][j]->Draw("AP");
+         graph_triton[i][j]->SetTitle(Form("Tel%02d_%02d_Z%02d_A%02d",i,j,Z,A));
+         graph_triton[i][j]->GetXaxis()->SetTitle("LISEEnergy(MeV)");
+         graph_triton[i][j]->GetXaxis()->CenterTitle(1);
+         graph_triton[i][j]->GetYaxis()->SetTitle("(CsIV-VCal)/Vcal(%)");
+         graph_triton[i][j]->GetYaxis()->CenterTitle(1);
        }
 
        gPad->Modified();
