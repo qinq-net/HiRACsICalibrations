@@ -6,7 +6,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 double FitJerzy(double *x, double *par)
 {
-  if(par[1]<=par[2])
+  if(par[2]<=par[3])
   {
     return -1;
   }
@@ -16,22 +16,40 @@ double FitJerzy(double *x, double *par)
   {
     int A = Int_t (x[1])%100;
     int Z = Int_t (x[1])/100;
-    double squareterm = pow(x[0], 2)+par[1]*A*x[0];
-    double linearterm = (x[0]+par[2]*A);
-    double light = par[0]*squareterm/linearterm;
+    double light = par[0]+par[1]*x[0]*(x[0]+par[2]*A)/(x[0]+par[3]*A);
     return light;
   }
   return 0;
 }
 //______________________________________________________________________________
+
+double FitFenhai(double *x, double *par)
+{
+  if(par[2]>=par[3])
+  {
+    return -1;
+  }
+
+  // x[0]--E, x[1]--A
+  if(x[1]==101 || x[1]==102 || x[1]==103)
+  {
+    int A = Int_t (x[1])%100;
+    int Z = Int_t (x[1])/100;
+    double exponent = (A+par[2])/(A+par[3]);
+    double light = par[0]+par[1]*pow(x[0],exponent);
+    return light;
+  }
+  return 0;
+}
+//______________________________________________________________________________
+
 //______________________________________________________________________________
 ////////////////////////////////////////////////////////////////////////////////
 //// deifinition of fitting formula of protons
 double fit_proton (double *x, double *par)
 {
-  double squareterm = pow(x[0], 2)+par[1]*1*x[0];
-  double linearterm = (x[0]+par[2]*1);
-  double light = par[0]*squareterm/linearterm;
+  double exponent = (1+par[2])/(1+par[3]);
+  double light = par[0]+par[1]*pow(x[0],exponent);
   return light;
 }
 //______________________________________________________________________________
@@ -40,23 +58,19 @@ double fit_proton (double *x, double *par)
 //// deifinition of fitting formula of deuterons
 double fit_deuteron (double *x, double *par)
 {
-  double squareterm = pow(x[0], 2)+par[1]*2*x[0];
-  double linearterm = (x[0]+par[2]*2);
-  double light = par[0]*squareterm/linearterm;
+  double exponent = (2+par[2])/(2+par[3]);
+  double light = par[0]+par[1]*pow(x[0],exponent);
   return light;
 }
 //______________________________________________________________________________
 //// deifinition of fitting formula of tritons
 double fit_triton (double *x, double *par)
 {
-  double squareterm = pow(x[0], 2)+par[1]*3*x[0];
-  double linearterm = (x[0]+par[2]*3);
-  double light = par[0]*squareterm/linearterm;
+  double exponent = (3+par[2])/(3+par[3]);
+  double light = par[0]+par[1]*pow(x[0],exponent);
   return light;
 }
 //______________________________________________________________________________
-
-
 
 
 //______________________________________________________________________________
@@ -64,37 +78,37 @@ void FitPDT()
 {
 
    ofstream FileOut;
-   FileOut.open("calibrations/SimultaneouslyFitParPDT.dat");
+   FileOut.open("../calibrations/SimultaneouslyFitParPDT.dat");
    FileOut << setw(5) <<"*tel" <<"  "<< setw(5) << "csi" <<"  "<<setw(5)<< "Z" <<"  "<<setw(5)<< "A" <<"  "<< setw(25) <<"Jerzy's Formula "
-               <<"  "<<setw(20) << "Par0" <<"  "<< setw(15) <<"Par1"<<"  "<<setw(10)<<"Par2\n";
+               <<"  "<<setw(20)<< "NumPar" << "Par0" <<"  "<< setw(15) <<"Par1"<<"  "<<setw(10)<<"Par2" <<"  "<<setw(10)<<"Par3\n";
 
   //////////////////////////////////////////////////////////////////////////////
   ////   retriving data for protons
   //////////////////////////////////////////////////////////////////////////////
-  Int_t NFiles_Proton=11;
+  const Int_t NFiles_Proton=11;
   std::string * FileIn_name_Proton[NFiles_Proton];
-  FileIn_name_Proton[0] = new std::string("calibrations/WMUdata_Z01_A01.dat");   // WMU data
-  FileIn_name_Proton[1] = new std::string("calibrations/DEEPointsOmitLow_Z01_A01.dat"); //DEE points
-  FileIn_name_Proton[2] = new std::string("calibrations/Corrected_HiRA_CsIKinimatics_2013_2037_40Ca39.0AMeV_gain 200.dat"); // kinematics ponits
-  FileIn_name_Proton[3] = new std::string("calibrations/Corrected_HiRA_CsIKinimatics_2312_2312_40Ca56.6AMeV_gain 170.dat"); // kinematics ponits
+  FileIn_name_Proton[0] = new std::string("../calibrations/WMUdataAddOnePecenterrEnergy_Z01_A01.dat");   // WMU data
+  FileIn_name_Proton[1] = new std::string("../calibrations/DEEPointsOmitLow_Z01_A01.dat"); //DEE points
+  FileIn_name_Proton[2] = new std::string("../calibrations/Corrected_HiRA_CsIKinimatics_2013_2037_40Ca39.0AMeV_gain 200.dat"); // kinematics ponits
+  FileIn_name_Proton[3] = new std::string("../calibrations/Corrected_HiRA_CsIKinimatics_2312_2312_40Ca56.6AMeV_gain 170.dat"); // kinematics ponits
   //FileIn_name_Proton[4] = new std::string("calibrations/Corrected_HiRA_CsIKinimatics_2825_2829_40Ca139.8AMeV_gain 130.dat"); // kinematics ponits
-  FileIn_name_Proton[4] = new std::string("calibrations/Corrected_HiRA_CsIKinimatics_4000_4005_48Ca139.8AMeV_gain 170.dat"); // kinematics ponits
-  FileIn_name_Proton[5] = new std::string("calibrations/Corrected_HiRA_CsIKinimatics_4021_4022_48Ca139.8AMeV_gain 170.dat"); // kinematics ponits
-  FileIn_name_Proton[6] = new std::string("calibrations/Corrected_HiRA_CsIKinimatics_4034_4037_48Ca28.0AMeV_gain 170.dat"); // kinematics ponits
-  FileIn_name_Proton[7] = new std::string("calibrations/Corrected_HiRA_CsIKinimatics_4332_4332_48Ca56.6AMeV_gain 170.dat"); // kinematics ponits
-  FileIn_name_Proton[8] = new std::string("calibrations/Corrected_HiRA_CsIKinimatics_4577_4584_48Ca28.0AMeV_gain 170.dat"); // kinematics ponits
-  FileIn_name_Proton[9] = new std::string("calibrations/Corrected_HiRA_CsIKinimatics_4585_4589_48Ca56.6AMeV_gain 170.dat"); // kinematics ponits
-  FileIn_name_Proton[10] = new std::string("calibrations/HiRA_CsI_PunchThrough_Z01_A01.dat");  // punch through points
+  FileIn_name_Proton[4] = new std::string("../calibrations/Corrected_HiRA_CsIKinimatics_4000_4005_48Ca139.8AMeV_gain 170.dat"); // kinematics ponits
+  FileIn_name_Proton[5] = new std::string("../calibrations/Corrected_HiRA_CsIKinimatics_4021_4022_48Ca139.8AMeV_gain 170.dat"); // kinematics ponits
+  FileIn_name_Proton[6] = new std::string("../calibrations/Corrected_HiRA_CsIKinimatics_4034_4037_48Ca28.0AMeV_gain 170.dat"); // kinematics ponits
+  FileIn_name_Proton[7] = new std::string("../calibrations/Corrected_HiRA_CsIKinimatics_4332_4332_48Ca56.6AMeV_gain 170.dat"); // kinematics ponits
+  FileIn_name_Proton[8] = new std::string("../calibrations/Corrected_HiRA_CsIKinimatics_4577_4584_48Ca28.0AMeV_gain 170.dat"); // kinematics ponits
+  FileIn_name_Proton[9] = new std::string("../calibrations/Corrected_HiRA_CsIKinimatics_4585_4589_48Ca56.6AMeV_gain 170.dat"); // kinematics ponits
+  FileIn_name_Proton[10] = new std::string("../calibrations/HiRA_CsI_PunchThrough_Z01_A01.dat");  // punch through points
 
   //////////////////////////////////////////////////////////////////////////////
   ///   definition of TGraphErrors, TMultiGraph, TLengend
   TGraphErrors * DataProton [12][4][NFiles_Proton];
   //////////////////////////////////////////////////////////////////////////////
   ///  definition of variables to read the input data files
-  std::vector<double> CsIV_Proton[12][4][12];
-  std::vector<double> errCsIV_Proton[12][4][12];
-  std::vector<double> CsIE_Proton[12][4][12];
-  std::vector<double> errCsIE_Proton[12][4][12];
+  std::vector<double> CsIV_Proton[12][4][NFiles_Proton];
+  std::vector<double> errCsIV_Proton[12][4][NFiles_Proton];
+  std::vector<double> CsIE_Proton[12][4][NFiles_Proton];
+  std::vector<double> errCsIE_Proton[12][4][NFiles_Proton];
 
   //////////////////////////////////////////////////////////////////////////////
   ///  definition of the number of data points for each input file
@@ -153,9 +167,9 @@ void FitPDT()
   //////////////////////////////////////////////////////////////////////////////
   Int_t NFiles_Deuteron=3;
   std::string * FileIn_name_Deuteron[NFiles_Deuteron];
-  FileIn_name_Deuteron[0] = new std::string("calibrations/WMUdata_Z01_A02.dat");   // WMU data
-  FileIn_name_Deuteron[1] = new std::string("calibrations/DEEPointsOmitLow_Z01_A02.dat"); //DEE points
-  FileIn_name_Deuteron[2] = new std::string("calibrations/HiRA_CsI_PunchThrough_Z01_A02.dat");  // punch through points
+  FileIn_name_Deuteron[0] = new std::string("../calibrations/WMUdataAddOnePecenterrEnergy_Z01_A02.dat");   // WMU data
+  FileIn_name_Deuteron[1] = new std::string("../calibrations/DEEPointsOmitLow_Z01_A02.dat"); //DEE points
+  FileIn_name_Deuteron[2] = new std::string("../calibrations/HiRA_CsI_PunchThrough_Z01_A02.dat");  // punch through points
 
   //////////////////////////////////////////////////////////////////////////////
   /// definition of TGraphErrors, TMultiGraph, TLengend
@@ -226,8 +240,8 @@ void FitPDT()
   //////////////////////////////////////////////////////////////////////////////
   Int_t NFiles_Triton=2;
   std::string * FileIn_name_Triton[NFiles_Triton];
-  FileIn_name_Triton[0] = new std::string("calibrations/DEEPointsOmitLow_Z01_A03.dat"); //DEE points
-  FileIn_name_Triton[1] = new std::string("calibrations/HiRA_CsI_PunchThrough_Z01_A03.dat");  // punch through points
+  FileIn_name_Triton[0] = new std::string("../calibrations/DEEPointsOmitLow_Z01_A03.dat"); //DEE points
+  FileIn_name_Triton[1] = new std::string("../calibrations/HiRA_CsI_PunchThrough_Z01_A03.dat");  // punch through points
 
   //////////////////////////////////////////////////////////////////////////////
   /// definition of TGraphErrors, TMultiGraph, TLengend
@@ -413,14 +427,16 @@ for(int i=0; i<12; i++)
 //______________________________________________________________________________
   //////////////////////////////////////////////////////////////////////////////
   ////
-  TF2 * fHydrogen = new TF2("fHydrogen",FitJerzy, 0, 1000, 100, 500, 3);
-  TF1 * fProton = new TF1("fProton", fit_proton, 0, 1000, 3);
-  TF1 * fDeuteron = new TF1("fDeuteron", fit_deuteron, 0, 1000, 3);
-  TF1 * fTriton = new TF1("fTriton", fit_triton, 0, 1000, 3);
+  TF2 * fHydrogen = new TF2("fHydrogen",FitFenhai, 0, 1000, 100, 500, 4);
+  TF1 * fProton = new TF1("fProton", fit_proton, 0, 1000, 4);
+  TF1 * fDeuteron = new TF1("fDeuteron", fit_deuteron, 0, 1000, 4);
+  TF1 * fTriton = new TF1("fTriton", fit_triton, 0, 1000, 4);
   fProton->SetLineColor(2);
   fDeuteron->SetLineColor(3);
   fTriton->SetLineColor(6);
-  fHydrogen->SetParameters(0.01,10,1);
+  fHydrogen->SetParameters(0.001,0.01,1.5,2);
+  fHydrogen->SetParLimits(2,0.5,2);
+  fHydrogen->SetParLimits(3,0.6,3);
 //______________________________________________________________________________
 
 
@@ -432,10 +448,15 @@ for(int i=0; i<12; i++)
   {
     for(int j=0; j<4; j++)
     {
+       if(i!=5 && (j!=0 || j!=1)) continue;
+
       if(CsIV_Hydrogen[i][j].size()==0) continue;
 
   //    TotGraph[i][j]->Draw("AP");
-      TotGraph[i][j]->Fit("fHydrogen");
+      // WARNING: Daniele condition, pleas NEVER touch it!
+      fHydrogen->SetParameters(0.001,0.01,1.5,2);
+      TotGraph[i][j]->Fit("fHydrogen","WM");
+      //--------------------------------------------------
       fProton->SetParameters(fHydrogen->GetParameters());
       fDeuteron->SetParameters(fHydrogen->GetParameters());
       fTriton->SetParameters(fHydrogen->GetParameters());
@@ -449,13 +470,14 @@ for(int i=0; i<12; i++)
 
       gPad->Modified();
       gPad->Update();
-    //  getchar();
+      getchar();
 
       //////////////////////////////////////////////////////////////////////////
       /// retrive the fit Parameters
       double par0 = fHydrogen->GetParameter(0);
       double par1 = fHydrogen->GetParameter(1);
       double par2 = fHydrogen->GetParameter(2);
+      double par3 = fHydrogen->GetParameter(3);
       int Z;
       int A;
       for(int k=0; k<ZA_Hydrogen[i][j].size();k++)
@@ -463,7 +485,7 @@ for(int i=0; i<12; i++)
         Z = (int) ZA_Hydrogen[i][j][k]/100;
         A = (int) ZA_Hydrogen[i][j][k]%100;
         if(ZA_Hydrogen[i][j][k]==ZA_Hydrogen[i][j][k+1]) continue;
-        FileOut << setw(5) << i <<"  "<< setw(5) << j <<"  "<<setw(5)<< Z <<"  "<<setw(5)<< A <<"  "<< setw(35)<< "[0].(pow(x,2)+[1].A.x)/(x+[2].A)"<<"  "<<setw(15) << par0 <<"  "<< setw(10) << par1 <<"  "<<setw(10)<< par2 <<endl;
+        FileOut << setw(5) << i <<"  "<< setw(5) << j <<"  "<<setw(5)<< Z <<"  "<<setw(5)<< A <<"  "<< setw(35)<< Form("[0]+[1].(pow(x,2)+[2].%d.x)/(x+[3].%d)", A,A) << "  "<<setw(15) << 4 <<"  "<< setw(10) << par0 <<"  "<< setw(10) << par1 <<"  "<<setw(10)<< par2 << setw(10) << par3 <<endl;
       }
      }
    }

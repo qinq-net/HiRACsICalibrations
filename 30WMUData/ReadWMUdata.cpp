@@ -1,22 +1,15 @@
 
 void ReadWMUdata()
 {
+  int Z=1;
+  int A=1;
 
-  ifstream FileIn("finalResult.txt");
+  ifstream FileIn("DATA/WMUDataFullIn.dat");
 
-  std::string FileOutTag("WMUdata");
-
-  ofstream FileOutProtons;
-  FileOutProtons.open(Form("../calibrations/%s_Z01_A01.dat", FileOutTag.c_str()));
-  FileOutProtons << setw(5) <<"*telnum" <<"  "<< setw(10) << "csinum" <<"  "<<setw(10)<<"CsIV (V)"<<"  "<<setw(10)<<"err_CsIV"<< setw(10) << "Energy(MeV)" <<"  "<<setw(10)<<"err_Energy"<<" "<<setw(5)<<"Z"<<"  "<<setw(5)<<"A\n";
-
-  ofstream FileOutDeuterons;
-  FileOutDeuterons.open(Form("../calibrations/%s_Z01_A02.dat", FileOutTag.c_str()));
-  FileOutDeuterons << setw(5) <<"*telnum" <<"  "<< setw(10) << "csinum" <<"  "<<setw(10)<<"CsIV (V)"<<"  "<<setw(10)<<"err_CsIV"<< setw(10) << "Energy(MeV)" <<"  "<<setw(10)<<"err_Energy"<<" "<<setw(5)<<"Z"<<"  "<<setw(5)<<"A\n";
-
-  ofstream FileOut4He;
-  FileOut4He.open(Form("../calibrations/%s_Z02_A04.dat", FileOutTag.c_str()));
-  FileOut4He << setw(5) <<"*telnum" <<"  "<< setw(10) << "csinum" <<"  "<<setw(10)<<"CsIV (V)"<<"  "<<setw(10)<<"err_CsIV"<< setw(10) << "Energy(MeV)" <<"  "<<setw(10)<<"err_Energy"<<" "<<setw(5)<<"Z"<<"  "<<setw(5)<<"A\n";
+  ofstream FileOut;
+  FileOut.open(Form("../calibrations/WMUData_Z%02d_A%02d.dat", Z, A));
+  FileOut << setw(5) <<"*tel" << setw(5) << "csi" <<setw(15)<< "CsICh"<<"  "<<setw(15)<< "errCsICh" <<
+          << setw(15)<< "CsIV(V)"<<"  "<<setw(15)<< "errCsIV(V)" << setw(15)<< "CsIE(MeV)" <<"  "<<setw(15)<<"errCsIE(MeV)\n";
 
   while(FileIn.is_open() && !FileIn.eof())
   {
@@ -28,19 +21,18 @@ void ReadWMUdata()
 
     std::stringstream LineStream(LineRead);
 
-    int ADCNum;
-    int HiRANum;
-  //  int TelNum;
+    int TelNum;
     int CsINum;
     int ANum;
     int ZNum;
-    double ECsI;
-    double errECsI;
+    double Ch;
+    double errCh;
     double CsIV;
     double errCsIV;
+    double ECsI;
+    double errECsI;
 
-
-    LineStream >> ADCNum >> HiRANum  >> CsINum >> ANum >> ZNum >> ECsI >> errECsI >> CsIV >> errCsIV;
+    LineStream >> TelNum >> CsINum  >> ANum >> ZNum >> ZNum >> Ch >> errCh >> CsIV >> errCsIV >> ECsI>>errECsI;
     if(HiRANum!=10) continue;
 
     if(ZNum==1 && ANum==1)

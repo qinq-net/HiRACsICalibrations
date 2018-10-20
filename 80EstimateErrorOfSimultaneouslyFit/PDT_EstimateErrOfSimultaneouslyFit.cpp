@@ -6,14 +6,15 @@
 ////////////////////////////////////////////////////////////////////////////////
 double FitJerzy(double *x, double *par)
 {
-  if(par[1]<=par[2])
+  if(par[2]<=par[3])
   {
     return -1;
   }
-  //A=par[3], Z=par[4]
-  double squareterm = pow(x[0], 2)+par[1]*par[3]*x[0];
-  double linearterm = (x[0]+par[2]*par[3]);
-  double light = par[0]*squareterm/linearterm;
+
+  // x[0]--E, x[1]--A
+  double squareterm = pow(x[0], 2)+par[2]*par[4]*x[0];
+  double linearterm = (x[0]+par[3]*par[4]);
+  double light = par[0]+par[1]*squareterm/linearterm;
   return light;
 }
 //______________________________________________________________________________
@@ -24,9 +25,6 @@ double FitJerzy(double *x, double *par)
 
 void PDT_EstimateErrOfSimultaneouslyFit()
 {
-   const int Z=1;
-   const int A=3;
-
    ofstream FileOut;
    FileOut.open("PDT_ErrofDataPointsToFitLine.dat");
    FileOut<< setw(5) << "*tel" <<"  "<< setw(5) << "csi" <<"  "<< setw(5) << "Z" <<"  "<< setw(5) << "A" <<"  "<< setw(10) << "CsIE(MeV)" <<"  "<< setw(10) << "CsIV-VCal"
@@ -112,7 +110,7 @@ void PDT_EstimateErrOfSimultaneouslyFit()
   std::vector<double> CsIE_Deuteron[12][4][3];
 
   //////////////////////////////////////////////////////////////////////////////
-  ///  definition of the number of data points for each input file
+  ///  definition of the number of data points for eaPDT_EstimateErrOfSimultaneouslyFit.cppch input file
   for(int FileNum=0; FileNum<NFiles_Deuteron; FileNum++)
   {
     ifstream FileIn_Deuteron(FileIn_name_Deuteron[FileNum]->c_str());
@@ -206,13 +204,14 @@ void PDT_EstimateErrOfSimultaneouslyFit()
   //////////////////////////////////////////////////////////////////////////////
   /// read fit parameters
   ifstream FileIn;
-  FileIn.open("../calibrations/SimultaneouslyFitParForAll.dat");
+  FileIn.open("../calibrations/SimultaneouslyFitParPDT.dat");
 
   std::vector<int> AValues[12][4];
   std::vector<int> ZValues[12][4];
   std::vector<double> par0[12][4];
   std::vector<double> par1[12][4];
   std::vector<double> par2[12][4];
+  std::vector<double> par3[12][4];
 
   while(FileIn.is_open() && !FileIn.eof())
   {
@@ -230,17 +229,20 @@ void PDT_EstimateErrOfSimultaneouslyFit()
     int ZValue;
     int AValue;
     std::string FitFormula;
+    double NumPar;
     double Par0;
     double Par1;
     double Par2;
+    double Par3;
 
-    LineStream >> telnum >> csinum >> ZValue >> AValue >> FitFormula >> Par0 >> Par1 >> Par2;
+    LineStream >> telnum >> csinum >> ZValue >> AValue >> FitFormula >> NumPar >> Par0 >> Par1 >> Par2 >> Par3;
 
     ZValues[telnum][csinum].push_back(ZValue);
     AValues[telnum][csinum].push_back(AValue);
     par0[telnum][csinum].push_back(Par0);
     par1[telnum][csinum].push_back(Par1);
     par2[telnum][csinum].push_back(Par2);
+    par3[telnum][csinum].push_back(Par3);
   }
   FileIn.close();
 //______________________________________________________________________________
@@ -257,11 +259,12 @@ void PDT_EstimateErrOfSimultaneouslyFit()
     {
       for(int k=0; k<ZValues[i][j].size(); k++)
       {
-        double par[4];
+        double par[5];
         par[0] = par0[i][j][k];
         par[1] = par1[i][j][k];
         par[2] = par2[i][j][k];
-        par[3] = AValues[i][j][k];
+        par[3] = par3[i][j][k];
+        par[4] = AValues[i][j][k];
 
         ////////////////////////////////////////////////////////////////////////
         /// calculation for protons
@@ -430,26 +433,27 @@ void PDT_EstimateErrOfSimultaneouslyFit()
    {
      for(int j=0; j<4; j++)
      {
+       if(i!=5) continue;
        multigraph[i][j] = new TMultiGraph();
        /////////////////////////////////////////////////////////////////////////
        //// create graph for protons
        graph_proton[i][j] = new TGraph(CsIEread_proton[i][j].size(),CsIEread_proton[i][j].data(), Pecentage_proton[i][j].data());
        graph_proton[i][j]->SetMarkerStyle(25);
-       graph_proton[i][j]->SetMarkerColor(2);
+       graph_proton[i][j]->SetMarkerColor(kRed);
        multigraph[i][j]->Add(graph_proton[i][j]);
 
        /////////////////////////////////////////////////////////////////////////
        //// create graph for deuterons
        graph_deuteron[i][j] = new TGraph(CsIEread_deuteron[i][j].size(),CsIEread_deuteron[i][j].data(), Pecentage_deuteron[i][j].data());
        graph_deuteron[i][j]->SetMarkerStyle(25);
-       graph_deuteron[i][j]->SetMarkerColor(2);
+       graph_deuteron[i][j]->SetMarkerColor(kGreen);
        multigraph[i][j]->Add(graph_deuteron[i][j]);
 
        /////////////////////////////////////////////////////////////////////////
        //// create graph for tritons
        graph_triton[i][j] = new TGraph(CsIEread_triton[i][j].size(),CsIEread_triton[i][j].data(), Pecentage_triton[i][j].data());
        graph_triton[i][j]->SetMarkerStyle(25);
-       graph_triton[i][j]->SetMarkerColor(2);
+       graph_triton[i][j]->SetMarkerColor(kBlue);
        multigraph[i][j]->Add(graph_triton[i][j]);
      }
    }
@@ -465,37 +469,10 @@ void PDT_EstimateErrOfSimultaneouslyFit()
 
      for(int j=0; j<4; j++)
      {
+       if(i!=5) continue;
 
-       if(Z==1 && A==1)
-       {
-         graph_proton[i][j]->Draw("AP");
-         graph_proton[i][j]->SetTitle(Form("Tel%02d_%02d_Z%02d_A%02d",i,j,Z,A));
-         graph_proton[i][j]->GetXaxis()->SetTitle("LISEEnergy(MeV)");
-         graph_proton[i][j]->GetXaxis()->CenterTitle(1);
-         graph_proton[i][j]->GetYaxis()->SetTitle("(CsIV-VCal)/Vcal(%)");
-         graph_proton[i][j]->GetYaxis()->CenterTitle(1);
+       multigraph[i][j]->Draw("AP");
 
-       }
-
-       if(Z==1 && A==2)
-       {
-         graph_deuteron[i][j]->Draw("AP");
-         graph_deuteron[i][j]->SetTitle(Form("Tel%02d_%02d_Z%02d_A%02d",i,j,Z,A));
-         graph_deuteron[i][j]->GetXaxis()->SetTitle("LISEEnergy(MeV)");
-         graph_deuteron[i][j]->GetXaxis()->CenterTitle(1);
-         graph_deuteron[i][j]->GetYaxis()->SetTitle("(CsIV-VCal)/Vcal(%)");
-         graph_deuteron[i][j]->GetYaxis()->CenterTitle(1);
-       }
-
-       if(Z==1 && A==3)
-       {
-         graph_triton[i][j]->Draw("AP");
-         graph_triton[i][j]->SetTitle(Form("Tel%02d_%02d_Z%02d_A%02d",i,j,Z,A));
-         graph_triton[i][j]->GetXaxis()->SetTitle("LISEEnergy(MeV)");
-         graph_triton[i][j]->GetXaxis()->CenterTitle(1);
-         graph_triton[i][j]->GetYaxis()->SetTitle("(CsIV-VCal)/Vcal(%)");
-         graph_triton[i][j]->GetYaxis()->CenterTitle(1);
-       }
 
        gPad->Modified();
        gPad->Update();

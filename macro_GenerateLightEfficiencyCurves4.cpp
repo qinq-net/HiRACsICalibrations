@@ -1,3 +1,5 @@
+//_______________________________________________________________________________
+
 std::vector <double> ParticleEnergy; //MeV/u
 std::vector <double> LiseELoss[NUM_MODELS];   //MeV/micron
 std::vector <double> ParticleEnergyRange; //MeV/u
@@ -65,16 +67,16 @@ int LoadEnergyLossFile(const char * file_name)
   return NRead;
 }
 
-void macro_GenerateLightEfficiencyCurves3()
+void macro_GenerateLightEfficiencyCurves4()
 {
-  int Z=3;
+  int Z=2;
   int A=6;
   const int LISEModel=1;
 
 //  std::string FileOutTag("InVoltage");
   std::string FileOutTag("InChannel");
 
-  ifstream FileIn(Form("calibrations/DEEFITPointsFullInfo.dat"));
+  ifstream FileIn(Form("calibrations/DEEFITPointsFullInfoTel05.dat"));
   ofstream FileOut(Form("calibrations/LightEfficiencyData%s_Z%02d_A%02d.dat",FileOutTag.c_str(), Z, A));
   FileOut << setw(10) << "*tel" << setw(10) << "numcsi" << setw(10) << "Z" << setw(10) << "A" << setw(20) << "-dE/dx (MeV/um)" << setw(20) << "Leff\n";
 
@@ -87,6 +89,7 @@ void macro_GenerateLightEfficiencyCurves3()
   TGraph * LightEnergyGraph [12][4];
 
   TGraph * LightEfficiencyGraph [12][4];
+  TGraph * LightEfficiencyGraph_Energy [12][4];
   std::vector<double> LightEfficiencyGraphData[12][4];
   std::vector<double> StoppingPowerGraphData[12][4];
   std::vector<double> EnergyGraphData[12][4];
@@ -144,23 +147,44 @@ void macro_GenerateLightEfficiencyCurves3()
       if(EnergyValues[i][j].size()==0) continue;
        TF1 * FitFuncLocal = new TF1("FitFuncLocal","pol2",0,2000);
        TF1 * FitFuncDerivative  = new TF1("FitFuncDerivative","pol1",0,2000);
-       int NumSteps=20;
+       TF1 * FitHornLike = new TF1("FitHornLike","[0]+[1]*(x-[2]*log((x+[2])/[2]))",0,2000);
+       int NumSteps=50;
        double EnergyStepData = (EnergyValues[i][j][EnergyValues[i][j].size()-1]-EnergyValues[i][j][0])/300;
        for(int k=0; k<NumSteps; k++) {
          double Energy = EnergyValues[i][j][0]+ (EnergyValues[i][j][EnergyValues[i][j].size()-1]-EnergyValues[i][j][0])*(k+1)/NumSteps - (EnergyValues[i][j][EnergyValues[i][j].size()-1]-EnergyValues[i][j][0])*0.5/NumSteps;
          double minIntervaLocal = Energy-5*EnergyStepData;
          double maxIntervaLocal = Energy+5*EnergyStepData;
 
-         //LightEnergyGraph[i][j]->Draw("AP *");
+         double Derivative=-9999;
+
+         if(Z==1 || Energy>40) {
          LightEnergyGraph[i][j]->Fit("FitFuncLocal","","",minIntervaLocal,maxIntervaLocal);
-         //LightEnergyGraph[i][j]->GetXaxis()->SetRangeUser(minIntervaLocal-2*EnergyStepData,maxIntervaLocal+2*EnergyStepData);
-         //LightEnergyGraph[i][j]->GetYaxis()->SetRangeUser(LightEnergyGraph[i][j]->Eval(minIntervaLocal-2*EnergyStepData),LightEnergyGraph[i][j]->Eval(maxIntervaLocal+2*EnergyStepData));
-         //gPad->Modified();
-         //gPad->Update();
-         //getchar();
+
          FitFuncDerivative->SetParameter(0,FitFuncLocal->GetParameter(1));
          FitFuncDerivative->SetParameter(1,2*FitFuncLocal->GetParameter(2));
-         double Derivative = FitFuncDerivative->Eval(Energy);
+         Derivative = FitFuncDerivative->Eval(Energy);
+         } else {
+          //Z>=2 particle with energy lower than 40 MeV
+          //Horn-Like fit
+          //printf("fitting with horn\n");
+          //FitHornLike->SetParameters(80,7,10);
+          //LightEnergyGraph[i][j]->Fit("FitHornLike","","",0,40);
+          //Derivative = FitHornLike->Derivative(Energy);
+          LightEnergyGraph[i][j]->Fit("FitFuncLocal","","",minIntervaLocal,maxIntervaLocal);
+
+          FitFuncDerivative->SetParameter(0,FitFuncLocal->GetParameter(1));
+          FitFuncDerivative->SetParameter(1,2*FitFuncLocal->GetParameter(2));
+          Derivative = FitFuncDerivative->Eval(Energy);
+          }
+
+          //LightEnergyGraph[i][j]->Draw("AP *");
+          //LightEnergyGraph[i][j]->GetXaxis()->SetRangeUser(minIntervaLocal-2*EnergyStepData,maxIntervaLocal+2*EnergyStepData);
+          //LightEnergyGraph[i][j]->GetYaxis()->SetRangeUser(LightEnergyGraph[i][j]->Eval(minIntervaLocal-2*EnergyStepData),LightEnergyGraph[i][j]->Eval(maxIntervaLocal+2*EnergyStepData));
+          //gPad->Modified();
+          //gPad->Update();
+          //getchar();
+
+
          LightEfficiencyGraphData[i][j].push_back(Derivative);
          StoppingPowerGraphData[i][j].push_back(SplineInterpolator[LISEModel].Eval(Energy/NucData->get_mass_Z_A_uma(Z,A)));
          EnergyGraphData[i][j].push_back(Energy);
@@ -175,20 +199,23 @@ void macro_GenerateLightEfficiencyCurves3()
   double ELoss300MeV = SplineInterpolator[LISEModel].Eval(300/NucData->get_mass_Z_A_uma(Z,A));
   printf("dE/dX 20 MeV = %f MeV/um\ndE/dX 100 MeV = %f MeV/um\ndE/dX 200 MeV = %f MeV/um\ndE/dX 300 MeV = %f MeV/um\n", ELoss20MeV, ELoss100MeV, ELoss200MeV, ELoss300MeV);
 
-  TCanvas * c1 = new TCanvas("c1","",1024,768);
+  TCanvas * c1 = new TCanvas("c1","",1368,756);
   c1->SetLogy(true);
-  c1->Divide(2,1);
+  c1->Divide(3,1);
 
   for(int i=0; i<12; i++) {
     for(int j=0; j<4; j++) {
       if(EnergyValues[i][j].size()==0) continue;
       LightEfficiencyGraph[i][j] = new TGraph(StoppingPowerGraphData[i][j].size(), StoppingPowerGraphData[i][j].data(), LightEfficiencyGraphData[i][j].data());
-      LightEfficiencyGraph[i][j] = new TGraph(StoppingPowerGraphData[i][j].size(), EnergyGraphData[i][j].data(), LightEfficiencyGraphData[i][j].data());
+      LightEfficiencyGraph_Energy[i][j] = new TGraph(StoppingPowerGraphData[i][j].size(), EnergyGraphData[i][j].data(), LightEfficiencyGraphData[i][j].data());
 
       c1->cd(1);
       LightEnergyGraph[i][j]->Draw("AL");
       c1->cd(2);
+      LightEfficiencyGraph_Energy[i][j]->Draw("AL *");
+      c1->cd(3);
       LightEfficiencyGraph[i][j]->Draw("AL *");
+
 
 
       /*
@@ -201,9 +228,9 @@ void macro_GenerateLightEfficiencyCurves3()
       ELoss200MeVLine.Draw("SAME");
       ELoss300MeVLine.Draw("SAME");
       */
-      gPad->Modified();
-      gPad->Update();
-      getchar();
+      //gPad->Modified();
+      //gPad->Update();
+      //getchar();
     }
   }
 

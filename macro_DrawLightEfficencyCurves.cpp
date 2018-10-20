@@ -360,6 +360,72 @@ void macro_DrawLightEfficencyCurves()
     Eloss_Be9[telnum][csinum].push_back(energyloss);
     Leff_Be9[telnum][csinum].push_back(lighteff);
   }
+
+
+  //////////////////////////////////////////////////////////////////////////////
+  //// retrive data for B10s
+  ifstream FileInB10;
+  FileInB10.open(Form("calibrations/LightEfficiencyData%s_Z05_A10.dat", FileInTag.c_str()));
+
+  std::vector<double> Eloss_B10[12][4];
+  std::vector<double> Leff_B10[12][4];
+
+  while(FileInB10.is_open() && !FileInB10.eof())
+  {
+    std::string LineRead;
+    std::getline(FileInB10, LineRead);
+
+    LineRead.assign(LineRead.substr(0, LineRead.find('*')));
+    if(LineRead.empty()) continue;
+    if(LineRead.find_first_not_of(' ')==std::string::npos) continue;
+
+    std::istringstream LineStream(LineRead);
+
+    int telnum;
+    int csinum;
+    int  Z;
+    int A;
+    double energyloss;
+    double lighteff;
+
+    LineStream >> telnum >> csinum >> Z >> A >> energyloss >> lighteff;
+
+    Eloss_B10[telnum][csinum].push_back(energyloss);
+    Leff_B10[telnum][csinum].push_back(lighteff);
+  }
+
+  //////////////////////////////////////////////////////////////////////////////
+  //// retrive data for C12s
+  ifstream FileInC12;
+  FileInC12.open(Form("calibrations/LightEfficiencyData%s_Z06_A12.dat", FileInTag.c_str()));
+
+  std::vector<double> Eloss_C12[12][4];
+  std::vector<double> Leff_C12[12][4];
+
+  while(FileInC12.is_open() && !FileInC12.eof())
+  {
+    std::string LineRead;
+    std::getline(FileInC12, LineRead);
+
+    LineRead.assign(LineRead.substr(0, LineRead.find('*')));
+    if(LineRead.empty()) continue;
+    if(LineRead.find_first_not_of(' ')==std::string::npos) continue;
+
+    std::istringstream LineStream(LineRead);
+
+    int telnum;
+    int csinum;
+    int  Z;
+    int A;
+    double energyloss;
+    double lighteff;
+
+    LineStream >> telnum >> csinum >> Z >> A >> energyloss >> lighteff;
+
+    Eloss_C12[telnum][csinum].push_back(energyloss);
+    Leff_C12[telnum][csinum].push_back(lighteff);
+  }
+
   FileInProton.close();
   FileInDeuteron.close();
   FileInTriton.close();
@@ -371,6 +437,8 @@ void macro_DrawLightEfficencyCurves()
   FileInLi8.close();
   FileInBe7.close();
   FileInBe9.close();
+  FileInB10.close();
+  FileInC12.close();
 //______________________________________________________________________________
 
 //______________________________________________________________________________
@@ -387,6 +455,8 @@ void macro_DrawLightEfficencyCurves()
   TGraph * graph_Li8[12][4];
   TGraph * graph_Be7[12][4];
   TGraph * graph_Be9[12][4];
+  TGraph * graph_B10[12][4];
+  TGraph * graph_C12[12][4];
 
   TLegend * legend[12][4];
 
@@ -409,6 +479,8 @@ void macro_DrawLightEfficencyCurves()
       graph_Li8[i][j] = new TGraph(Eloss_Li8[i][j].size(), Eloss_Li8[i][j].data(), Leff_Li8[i][j].data());
       graph_Be7[i][j] = new TGraph(Eloss_Be7[i][j].size(), Eloss_Be7[i][j].data(), Leff_Be7[i][j].data());
       graph_Be9[i][j] = new TGraph(Eloss_Be9[i][j].size(), Eloss_Be9[i][j].data(), Leff_Be9[i][j].data());
+      graph_B10[i][j] = new TGraph(Eloss_B10[i][j].size(), Eloss_B10[i][j].data(), Leff_B10[i][j].data());
+      graph_C12[i][j] = new TGraph(Eloss_C12[i][j].size(), Eloss_C12[i][j].data(), Leff_C12[i][j].data());
 
       printf("sizep=%zu sized=%zu sizet=%zu\n", Eloss_Proton[i][j].size(),Eloss_Deuteron[i][j].size(), Eloss_Triton[i][j].size());
 
@@ -423,6 +495,8 @@ void macro_DrawLightEfficencyCurves()
       graph_Li8[i][j]->SetLineColor(kAzure+1);
       graph_Be7[i][j]->SetLineColor(kMagenta);
       graph_Be9[i][j]->SetLineColor(kMagenta);
+      graph_B10[i][j]->SetLineColor(kBlue);
+      graph_C12[i][j]->SetLineColor(kOrange);
 
       graph_Proton[i][j]->SetLineWidth(2);
       graph_Deuteron[i][j]->SetLineWidth(2);
@@ -435,6 +509,10 @@ void macro_DrawLightEfficencyCurves()
       graph_Li8[i][j]->SetLineWidth(2);
       graph_Be7[i][j]->SetLineWidth(2);
       graph_Be9[i][j]->SetLineWidth(2);
+      graph_B10[i][j]->SetLineWidth(2);
+      graph_C12[i][j]->SetLineWidth(2);
+      graph_B10[i][j]->SetLineStyle(2);
+      graph_C12[i][j]->SetLineStyle(2);
 
       multigraph[i][j]->Add(graph_Proton[i][j]);
       multigraph[i][j]->Add(graph_Deuteron[i][j]);
@@ -447,6 +525,8 @@ void macro_DrawLightEfficencyCurves()
       multigraph[i][j]->Add(graph_Li8[i][j]);
       multigraph[i][j]->Add(graph_Be7[i][j]);
       multigraph[i][j]->Add(graph_Be9[i][j]);
+      multigraph[i][j]->Add(graph_B10[i][j]);
+      multigraph[i][j]->Add(graph_C12[i][j]);
 
       legend[i][j] = new TLegend(0.3,0.2,0.7,0.4);
       legend[i][j]->SetBorderSize(0);
@@ -462,6 +542,8 @@ void macro_DrawLightEfficencyCurves()
       legend[i][j]->AddEntry(graph_Li8[i][j],"^{8}Li","l");
       legend[i][j]->AddEntry(graph_Be7[i][j],"^{7}Be","l");
       legend[i][j]->AddEntry(graph_Be9[i][j],"^{9}Be","l");
+      legend[i][j]->AddEntry(graph_B10[i][j],"^{10}B","l");
+      legend[i][j]->AddEntry(graph_C12[i][j],"^{12}C","l");
     }
   }
 //______________________________________________________________________________
@@ -475,9 +557,9 @@ void macro_DrawLightEfficencyCurves()
   {
     for(int j=0; j<4; j++)
     {
-      //if(i!=5 || j!=0) continue;
+      if(i!=5 || j!=0) continue;
       gPad->SetLogx(1);
-      multigraph[i][j]->Draw("AL");
+      multigraph[i][j]->Draw("AC");
       multigraph[i][j]->SetTitle(Form("HiRATel%02d_%02d",i,j));
       //multigraph[i][j]->GetYaxis()->SetRangeUser(0.0015,0.012);
       multigraph[i][j]->GetXaxis()->SetLabelSize(0.05);
@@ -488,7 +570,7 @@ void macro_DrawLightEfficencyCurves()
       multigraph[i][j]->GetYaxis()->SetTitle("dL/dE (a.u.)");
       multigraph[i][j]->GetXaxis()->CenterTitle(true);
       multigraph[i][j]->GetYaxis()->CenterTitle(true);
-      
+
 
       //legend[i][j]->Draw("SAME");
 
