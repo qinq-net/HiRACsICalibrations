@@ -448,15 +448,18 @@ for(int i=0; i<12; i++)
   {
     for(int j=0; j<4; j++)
     {
-       if(i!=5 && (j!=0 || j!=1)) continue;
+    //   if(i!=5 && (j!=0 || j!=1)) continue;
 
       if(CsIV_Hydrogen[i][j].size()==0) continue;
 
-  //    TotGraph[i][j]->Draw("AP");
-      // WARNING: Daniele condition, pleas NEVER touch it!
+      //  TotGraph[i][j]->Draw("AP");
+      //  WARNING: Daniele condition, pleas NEVER touch it!
+      //  fHydrogen->SetParameters(0.001,0.01,1.5,2);
+      //  TotGraph[i][j]->Fit("fHydrogen","WM");
+      //--------------------------------------------------
       fHydrogen->SetParameters(0.001,0.01,1.5,2);
       TotGraph[i][j]->Fit("fHydrogen","WM");
-      //--------------------------------------------------
+
       fProton->SetParameters(fHydrogen->GetParameters());
       fDeuteron->SetParameters(fHydrogen->GetParameters());
       fTriton->SetParameters(fHydrogen->GetParameters());

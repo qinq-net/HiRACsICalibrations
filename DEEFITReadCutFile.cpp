@@ -67,7 +67,7 @@ void DEEFITReadCutFile()
   ifstream FileInCut("calibrations/DEEFITCut.dat");
   ifstream FileInPar("calibrations/DEEFITParameters.dat");
 
-  ofstream FileOut("calibrations/DEEFITPointsFullInfoTel05.dat");
+  ofstream FileOut("calibrations/DEEFITPointsFullInfo.dat");
   FileOut << setw(5) <<" *tel " << setw(5) << "csi " << setw(5) << "Z" << setw(5) << "A" << setw(10) << "CsICh"<<setw(10)<< "errCsICh"
           << setw(10) << "CsIV " << setw(15) << "errCsIV"<<"  "<< setw(15) << "CsIE" << setw(15) << "errCsIE" << setw(15)<< "ESi" << setw(15) << "errESi\n";
 
@@ -106,8 +106,9 @@ void DEEFITReadCutFile()
     std::string LineRead;
     std::getline(FileInPar, LineRead);
 
+    LineRead.assign(LineRead.substr(0, LineRead.find('*')));
     if(LineRead.empty()) continue;
-    if(LineRead.find('*')==0) continue;
+    if(LineRead.find_first_not_of(' ')==std::string::npos) continue;
 
     std::istringstream LineStream(LineRead);
 
@@ -122,7 +123,6 @@ void DEEFITReadCutFile()
     LineStream >> ntel >> mf >> npar ;
     numtel = ntel/4; // take integer
     numcsi = ntel%4;
-    if(numtel!=5) continue;
 
     LineStream >> par0[numtel][numcsi] >> par1[numtel][numcsi] >> par2[numtel][numcsi] >> par3[numtel][numcsi];
     LineStream >> par4[numtel][numcsi] >> par5[numtel][numcsi] >> par6[numtel][numcsi] >> par7[numtel][numcsi];
@@ -149,7 +149,6 @@ void DEEFITReadCutFile()
     LineStream >> numtel >> numcsi;
     LineStream >> Z >> A;
     LineStream >> CutStart >> CutEnd >> CutStep;
-    if(numtel!=5) continue;
 
     double par[14];
     par[0] = par0[numtel][numcsi] ;

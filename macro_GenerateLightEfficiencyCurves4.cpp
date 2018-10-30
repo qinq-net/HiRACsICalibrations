@@ -69,14 +69,14 @@ int LoadEnergyLossFile(const char * file_name)
 
 void macro_GenerateLightEfficiencyCurves4()
 {
-  int Z=2;
-  int A=6;
+  int Z=7;
+  int A=14;
   const int LISEModel=1;
 
 //  std::string FileOutTag("InVoltage");
   std::string FileOutTag("InChannel");
 
-  ifstream FileIn(Form("calibrations/DEEFITPointsFullInfoTel05.dat"));
+  ifstream FileIn(Form("calibrations/DEEFITPointsFullInfoTel05_Z7Z8.dat"));
   ofstream FileOut(Form("calibrations/LightEfficiencyData%s_Z%02d_A%02d.dat",FileOutTag.c_str(), Z, A));
   FileOut << setw(10) << "*tel" << setw(10) << "numcsi" << setw(10) << "Z" << setw(10) << "A" << setw(20) << "-dE/dx (MeV/um)" << setw(20) << "Leff\n";
 
